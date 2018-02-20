@@ -1,8 +1,12 @@
-﻿using System;
+﻿using GraphMed_Beta.CypherHandling;
+using GraphMed_Beta.FileHandling;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
+using GraphMed_Beta.Model.Nodes;
 
 namespace GraphMed_Beta
 {
@@ -10,6 +14,7 @@ namespace GraphMed_Beta
     {
         static void Main(string[] args)
         {
+            Console.Read(); 
         }
     }
 }
