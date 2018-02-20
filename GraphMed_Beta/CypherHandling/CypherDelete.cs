@@ -28,7 +28,7 @@ namespace GraphMed_Beta.CypherHandling
                           .Match("(n)")
                           .With("n")
                           .Limit(Limit)
-                          .DetachDelete("n")
+                          .DetachDelete("(n)")
                           .ExecuteWithoutResults();
             }
             catch (NeoException)
@@ -53,7 +53,7 @@ namespace GraphMed_Beta.CypherHandling
                           .Match("(n)")
                           .With("n")
                           .Limit(Limit)
-                          .Delete("n")
+                          .Delete("(n)")
                           .ExecuteWithoutResults();
             }
             catch (NeoException)
@@ -79,7 +79,7 @@ namespace GraphMed_Beta.CypherHandling
                           .Match("(n: " + node.Name + ")")
                           .With("n")
                           .Limit(Limit)
-                          .Delete("n")
+                          .Delete("(n)")
                           .ExecuteWithoutResults();
             }
             catch (NeoException)

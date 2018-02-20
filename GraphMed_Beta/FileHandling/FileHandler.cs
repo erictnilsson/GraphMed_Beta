@@ -100,9 +100,9 @@ namespace GraphMed_Beta.FileHandling
                 {
                     dict.ElementAt(i).Value.Insert(0, headers);
                     var content = dict.ElementAt(i).Value.ToArray();
-                    string fileName = Cypher.Get(null).Term(dict.ElementAt(i).Key);
+                    string fileName = Cypher.Get(null).Term(dict.ElementAt(i).Key).Replace("-", "").Replace(" ", "_").ToUpper();
 
-                    File.WriteAllLines(filepath.Substring(filepath.LastIndexOf("/"), filepath.Length - filepath.LastIndexOf("/")) + fileName + ".txt", content);
+                    File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsedRelationship-" + fileName + ".txt", content);
                 }
             }
             else

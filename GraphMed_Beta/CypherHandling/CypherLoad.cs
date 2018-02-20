@@ -30,8 +30,8 @@ namespace GraphMed_Beta.CypherHandling
         /// </summary>
         public void Relationships()
         {
-            foreach (var uri in FileHandler.GetFiles("parsedRelationships-"))
-                LoadRelationships(uri);
+            foreach (var uri in FileHandler.GetFiles("parsedRelationship-"))
+                LoadRelationships("file:///" + uri.Substring(uri.LastIndexOf("\\") +1));
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="uri"></param>
         private void LoadRelationships(string uri)
         {
-            var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.IndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
+            var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
             try
             {
                 Connection.Cypher

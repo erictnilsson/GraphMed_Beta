@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 using GraphMed_Beta.Model.Nodes;
+using System.Diagnostics;
 
 namespace GraphMed_Beta
 {
@@ -14,7 +15,16 @@ namespace GraphMed_Beta
     {
         static void Main(string[] args)
         {
-            Console.Read(); 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            //  ----------------------------
+            //FileHandler.SplitRelationshipCSV("fullRelationships"); 
+            Cypher.Load(limit: null, commit: 10000).Relationships(); 
+            //  ----------------------------
+            stopwatch.Stop(); 
+            Console.WriteLine("Process completed in " + stopwatch.ElapsedMilliseconds + "ms");
+            
         }
     }
 }
