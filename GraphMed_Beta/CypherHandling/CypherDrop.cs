@@ -24,7 +24,7 @@ namespace GraphMed_Beta.CypherHandling
         {
             Index<Description>();
             Constraint<Description>();
-            Constraint<Concept>();
+            Index<Concept>(); 
         }
 
         /// <summary>

@@ -25,6 +25,12 @@ namespace GraphMed_Beta.CypherHandling
             this.CommitSize = commitSize;
         }
 
+        public void Refset()
+        {
+            foreach (var uri in FileHandler.GetFiles("parsedRefset-"))
+                LoadRefset("file:///" + uri.Substring(uri.LastIndexOf("\\") + 1));
+        }
+
         /// <summary>
         /// LOADS ALL PARSED RELATIONSHIPS
         /// </summary>
@@ -43,6 +49,7 @@ namespace GraphMed_Beta.CypherHandling
         {
             var uri = ConfigurationManager.AppSettings["concepts"];
             LoadNodes<Concept>(uri);
+
             if (index)
                 Cypher.Create().Index<Concept>("Id");
         }
@@ -70,7 +77,7 @@ namespace GraphMed_Beta.CypherHandling
                 Cypher.Create().Constraint<Description>("Id");
         }
 
-        public void LoadRefset(string uri)
+        private void LoadRefset(string uri)
         {
             var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
             try
@@ -80,8 +87,8 @@ namespace GraphMed_Beta.CypherHandling
                           .With(Identifier)
                           .Limit(Limit)
                           .Match("(d:Description)")
-                          .Where("d.Id = " + Identifier + "referencedComponentId")
-                          .Create("(d)-[:" + relationship + "{ " + Utils.GetBuildString<Refset>(Identifier) + "}]->(t:Term{" + Utils.GetBuildString<TermNode>(Identifier) + " })")
+                          .Where("d.Id = " + Identifier + ".referencedComponentId")
+                          .Create("(d)-[:" + relationship + "{ " + Utils.GetBuildString<Refset>(Identifier) + "}]->(t:Term {Id: "+ Identifier + ".referencedComponentId, Term: d.Term})")
                           .ExecuteWithoutResults();
             }
             catch (NeoException)

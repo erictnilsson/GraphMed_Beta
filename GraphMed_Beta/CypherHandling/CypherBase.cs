@@ -15,13 +15,13 @@ namespace GraphMed_Beta.CypherHandling
 
         public CypherBase()
         {
-            this.Connection = new Connection(timeout: 3D).Connect(); 
+            this.Connection = new Connection(timeout: 10D).Connect(); 
         }
 
         public CypherBase(int? limit)
         {
             this.Limit = limit;
-            this.Connection = new Connection(timeout: 3D).Connect(); 
+            this.Connection = new Connection(timeout: 10D).Connect(); 
         }
     }
 }

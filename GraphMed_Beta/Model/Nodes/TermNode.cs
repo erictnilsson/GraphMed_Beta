@@ -9,14 +9,14 @@ namespace GraphMed_Beta.Model.Nodes
     class TermNode : Node
     {
         public string Term { get; set; }
-        public string DescriptionId { get; set; }
+        public string Id { get; set; }
 
         public TermNode() : base() { }
 
-        public TermNode(string term, string descriptionId) : base()
+        public TermNode(string term, string id) : base()
         {
             this.Term = term;
-            this.DescriptionId = descriptionId;
+            this.Id = id;
         }
     }
 }
