@@ -111,6 +111,40 @@ namespace GraphMed_Beta.FileHandling
             }
         }
 
+        public static void SplitCSV(string configKey, string identifier)
+        {
+            var filepath = path + ConfigurationManager.AppSettings[configKey];
+            // Dictionary that holds the text as Value and the identifier as the key
+            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+            if (File.Exists(filepath))
+            {
+                var text = File.ReadAllLines(filepath);
+                var row = new string[0];
+                var index = 0;
+                for (int i = 0; i < text.Length; i++)
+                {
+                    row = text[i].Split('\t');
+
+                    if (i == 0)
+                        index = Array.IndexOf(row, identifier);
+
+                    if (!dict.ContainsKey(row[index]))
+                        dict.Add(row[index], new List<string> { text[i] });
+                    else
+                        dict[row[index]].Add(text[i]);
+                }
+                var headers = dict.ElementAt(0).Value.FirstOrDefault();
+                for (int i = 1; i < dict.Count; i++)
+                {
+                    dict.ElementAt(i).Value.Insert(0, headers);
+                    var content = dict.ElementAt(i).Value.ToArray();
+                    string fileName = Cypher.Get(null).Term(dict.ElementAt(i).Key).Replace("-", "").Replace(" ", "_").ToUpper();
+
+                    File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsedRefset-" + fileName + ".txt", content); ;
+                }
+            }
+        }
+
         /// <summary>
         /// FINDS ALL OF THE FILENAMES WITH THE SPECIFIED SEARCH PATTERN IN THE IMPORT DIRECTORY
         /// </summary>

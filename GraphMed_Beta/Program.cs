@@ -19,9 +19,9 @@ namespace GraphMed_Beta
             stopwatch.Start();
 
             //  ----------------------------
-            //FileHandler.SplitRelationshipCSV("fullRelationships"); 
-            Cypher.Load(limit: null, commit: 10000).Relationships(); 
+            FileHandler.SplitCSV(configKey: "fullRefset", identifier: "acceptabilityId"); 
             //  ----------------------------
+
             stopwatch.Stop(); 
             Console.WriteLine("Process completed in " + stopwatch.ElapsedMilliseconds + "ms");
             

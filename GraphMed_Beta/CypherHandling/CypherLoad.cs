@@ -31,7 +31,7 @@ namespace GraphMed_Beta.CypherHandling
         public void Relationships()
         {
             foreach (var uri in FileHandler.GetFiles("parsedRelationship-"))
-                LoadRelationships("file:///" + uri.Substring(uri.LastIndexOf("\\") +1));
+                LoadRelationships("file:///" + uri.Substring(uri.LastIndexOf("\\") + 1));
         }
 
         /// <summary>
@@ -68,6 +68,30 @@ namespace GraphMed_Beta.CypherHandling
                 Cypher.Create().Index<Description>("ConceptId");
             if (constrain)
                 Cypher.Create().Constraint<Description>("Id");
+        }
+
+        public void LoadRefset(string uri)
+        {
+            var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
+            try
+            {
+                Connection.Cypher
+                          .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                          .With(Identifier)
+                          .Limit(Limit)
+                          .Match("(d:Description)")
+                          .Where("d.Id = " + Identifier + "referencedComponentId")
+                          .Create("(d)-[:" + relationship + "{ " + Utils.GetBuildString<Refset>(Identifier) + "}]->(t:Term{" + Utils.GetBuildString<TermNode>(Identifier) + " })")
+                          .ExecuteWithoutResults();
+            }
+            catch (NeoException)
+            {
+                throw;
+            }
+            finally
+            {
+                Connection.Dispose();
+            }
         }
 
         /// <summary>

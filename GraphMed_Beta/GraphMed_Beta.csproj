@@ -80,7 +80,9 @@
     <Compile Include="Model\Nodes\Concept.cs" />
     <Compile Include="Model\Nodes\Description.cs" />
     <Compile Include="Model\Nodes\Node.cs" />
+    <Compile Include="Model\Nodes\TermNode.cs" />
     <Compile Include="Model\Relationships\Determinant.cs" />
+    <Compile Include="Model\Relationships\Refset.cs" />
     <Compile Include="Model\Relationships\Relationship.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
