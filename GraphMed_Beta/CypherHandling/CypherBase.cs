@@ -4,9 +4,9 @@ using Neo4jClient;
 namespace GraphMed_Beta.CypherHandling
 {
 /// <summary>
-/// USED AS THE BASE FOR ALL CYPHERS. 
-/// HOLDS A NULLABE 'LIMIT', LIMITING THE NUMBER OF RESULTS A RETURNABLE CYPHER HAS. 
-/// HOLDS A CONNECTION TO THE NEO4J CLIENT
+/// Used as the base for all cyphers. 
+/// Holds a nullable 'Limit', setting the number of results a returnable cypher should have. 
+/// Also holds a connection to the Neo4j Client. 
 /// </summary>
     abstract class CypherBase
     {

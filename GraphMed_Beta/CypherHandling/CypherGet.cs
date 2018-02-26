@@ -8,7 +8,7 @@ using Neo4jClient;
 namespace GraphMed_Beta.CypherHandling
 {
     /// <summary>
-    /// USED TO WRITE 'GET' CYPHERS
+    /// Used to write 'Get' Cyphers. 
     /// </summary>
     class CypherGet : CypherBase
     {
@@ -17,8 +17,8 @@ namespace GraphMed_Beta.CypherHandling
         public CypherGet(int? limit) : base(limit) { }
 
         /// <summary>
-        /// GET THE SYNONYM TERM OF THE SPECIFIED CONCEPT. 
-        /// USED PRIMARILY TO RELATIONSHIP TERM WHEN CONSTRUCTING RELATIONSHIPS
+        /// Gets the synonym term of the specified Concept. 
+        /// Used primarily to get the relationship term when constructing relationships. 
         /// </summary>
         /// <param name="conceptId"></param>
         /// <returns></returns>

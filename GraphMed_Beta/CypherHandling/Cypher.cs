@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace GraphMed_Beta.CypherHandling
 {
 /// <summary>
-/// USED TO HANDLE AND WRITE CYPHERS. 
-/// SHOULD BE THE CLASS FIRST CALLED UPON WHEN WRITING A CYPHER.
+/// Handler used to manage and write Cyphers. 
+/// Call the methods and set a result limit and possible commit size as params. 
 /// </summary>
     class Cypher
     {

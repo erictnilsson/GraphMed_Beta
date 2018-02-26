@@ -10,7 +10,7 @@ using Neo4jClient;
 namespace GraphMed_Beta.ConnectionHandling
 {
 /// <summary>
-/// HANDLES THE CONNECTION TO THE NEO4J CLIENT
+/// Used to connect to the Neo4j client enabling the use of cyphers. 
 /// </summary>
     class Connection : IDisposable
     {
@@ -21,7 +21,7 @@ namespace GraphMed_Beta.ConnectionHandling
         private static HttpClient HttpClient { get; set; }
 
         /// <summary>
-        /// CONSTRUCTOR WITH DEFAULT TIMEOUT SET TO 1 MINUTE
+        /// Connection to the Neo4j Client with a default timeout set to 1 minute. 
         /// </summary>
         public Connection()
         {
@@ -33,7 +33,7 @@ namespace GraphMed_Beta.ConnectionHandling
         }
 
         /// <summary>
-        /// CONSTRUCTOR WITH CUSTOM TIMEOUT
+        /// Connection to the Neo4j Client with a custom timeout. 
         /// </summary>
         /// <param name="timeout"></param>
         public Connection(double timeout)
@@ -46,7 +46,7 @@ namespace GraphMed_Beta.ConnectionHandling
         }
 
         /// <summary>
-        /// CONNECTS TO THE CLIENT 
+        /// Connects to the Neo4j Client. 
         /// </summary>
         /// <returns></returns>
         public GraphClient Connect()
@@ -57,7 +57,7 @@ namespace GraphMed_Beta.ConnectionHandling
         }
 
         /// <summary>
-        /// DISPOSES THE CLIENT
+        /// Disposes the Neo4j Client. 
         /// </summary>
         public void Dispose()
         {

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace GraphMed_Beta.CypherHandling
 {
     /// <summary>
-    /// USED TO WRITE 'LOAD' CYPHERS
+    /// Used to write 'Load' Cyphers. 
     /// </summary>
     class CypherLoad : CypherBase
     {
@@ -32,7 +32,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// LOADS ALL PARSED RELATIONSHIPS
+        /// Loads all Relationships. 
         /// </summary>
         public void Relationships()
         {
@@ -41,8 +41,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// LOAD ALL CONCEPTS
-        /// WITH OR WITHOUT INDEXING ON 'ID'
+        /// Loads all Concepts with our without indexing the Concepts on 'Id'.
         /// </summary>
         /// <param name="index"></param>
         public void Concepts(bool index)
@@ -55,9 +54,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// LOAD ALL DESCRIPTIONS
-        /// WITH OUR WITHOUT INDEXING ON 'CONCEPTID'
-        /// AND CONSTRAINING ON 'ID'
+        /// Loads all Descriptions with or without indexing on 'ConceptId' and constraining on 'Id'.
         /// </summary>
         /// <param name="forceRelationship"></param>
         /// <param name="index"></param>
@@ -102,7 +99,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// LOAD RELATIONSHIP OF THE SPECIFIED CSV URI
+        /// Loads the relationships of the specified .CSV URI. 
         /// </summary>
         /// <param name="uri"></param>
         private void LoadRelationships(string uri)
@@ -131,8 +128,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// LOAD DESCRIPTION FROM THE SPECIFIED CSV URI
-        /// CONNECTING IT TO IT'S ANCHORING CONCEPT
+        /// Loads Descriptions from the specified .CSV URI, connecting it to it's anchoring Concept. 
         /// </summary>
         /// <param name="uri"></param>
         private void LoadRelationalDescriptions(string uri)
@@ -159,7 +155,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// LOAD NODES FROM THE SPECIFIED CSV URI
+        /// Loads the Nodes from the specified .CSV URI. 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="uri"></param>

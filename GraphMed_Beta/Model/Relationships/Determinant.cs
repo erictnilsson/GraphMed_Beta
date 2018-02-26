@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace GraphMed_Beta.Model.Relationships
 {
 /// <summary>
-/// MODEL FOR THE RELATIONSHIPS THAT DETERMINES A RELATIONSHIP BETWEEN TWO NODES. 
-/// E.G. 'IS_A'
+/// Model for the relationships that determines a relationship between two Nodes. E.G. 'IS_A'. 
 /// </summary>
     class Determinant : Relationship
     {

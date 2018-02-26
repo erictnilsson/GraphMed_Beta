@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace GraphMed_Beta.CypherHandling
 {
     /// <summary>
-    /// USED TO WRITE 'DROP' CYPHERS
+    /// Used to write 'Drop' Cyphers. 
     /// </summary>
     class CypherDrop : CypherBase
     {
@@ -18,7 +18,7 @@ namespace GraphMed_Beta.CypherHandling
         public CypherDrop(int? limit) : base(limit) { }
 
         /// <summary>
-        /// DROPS ALL INDEXES AND CONSTRAINTS
+        /// Drops all indexes and constraints. 
         /// </summary>
         public void Everything()
         {
@@ -28,7 +28,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// DROP INDEX ON THE SPECIFIED NODE
+        /// Drops index on the specifed Node. 
         /// </summary>
         /// <typeparam name="Node"></typeparam>
         public void Index<Node>()
@@ -47,7 +47,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// DROP CONSTRAINT ON THE SPECIFIED NODE
+        /// Drops constraint on the specified Node. 
         /// </summary>
         /// <typeparam name="Node"></typeparam>
         public void Constraint<Node>()
@@ -56,7 +56,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// USED PRIVATELY TO GENERICALLY DROP A CONSTRAINT
+        /// Used privately to generically drop a constraint. 
         /// </summary>
         /// <typeparam name="Node"></typeparam>
         /// <param name="identifier"></param>
@@ -80,7 +80,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// USED PRIVATELY TO GENERICALLY DROP AN INDEX
+        /// Used privately to generically drop an index. 
         /// </summary>
         /// <typeparam name="Node"></typeparam>
         /// <param name="identifier"></param>

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace GraphMed_Beta.CypherHandling
 {
     /// <summary>
-    /// USED TO WRITE 'DELETE' CYPHERS
+    /// Used to write 'Delete' Cyphers. 
     /// </summary>
     class CypherDelete : CypherBase
     {
@@ -18,7 +18,7 @@ namespace GraphMed_Beta.CypherHandling
         public CypherDelete(int? limit) : base(limit) { }
 
         /// <summary>
-        /// DETACHES AND DELETES ALL NODES INDEPENDENT ON THE NODE TYPE
+        /// Detaches and deletes all nodes independent on the Node type. 
         /// </summary>
         public void DetachDelete()
         {
@@ -43,7 +43,7 @@ namespace GraphMed_Beta.CypherHandling
 
 
         /// <summary>
-        /// DELETES ALL NODES INDEPENDENT ON THE NODE TYPE
+        /// Deletes all nodes independent of the Node type
         /// </summary>
         public void Delete()
         {
@@ -67,7 +67,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// DELETES ALL SPECIFIED NODES
+        /// Deletes all specified Nodes. 
         /// </summary>
         /// <typeparam name="Node"></typeparam>
         public void Delete<Node>()
@@ -93,7 +93,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// DETACHED AND DELETES ALL SPECIFIED NODES
+        /// Detaches and deletes all specified Nodes. 
         /// </summary>
         /// <typeparam name="Node"></typeparam>
         public void DetachDelete<Node>()

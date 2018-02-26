@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace GraphMed_Beta.Model.Relationships
 {
-    /*
-     * INIT COMMENT
-     */
     abstract class Relationship
     {
         public Relationship() { }

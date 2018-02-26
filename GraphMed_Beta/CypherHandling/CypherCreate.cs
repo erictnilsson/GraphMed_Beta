@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace GraphMed_Beta.CypherHandling
 {
     /// <summary>
-    /// USED TO WRITE 'CREATE' CYPHERS. 
+    /// Used to write 'Create' Cyphers. 
     /// </summary>
     class CypherCreate : CypherBase
     {
         public CypherCreate() : base() { }
 
         /// <summary>
-        /// CREATE AN INDEX ON THE SPECIFIED NODE TYPE AND NODE IDENTIFIER
+        /// Create an index for the specified Node on the specified attribute.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="identifier"></param>
@@ -40,7 +40,7 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
-        /// CREATE A CONSTRAINT ON THE SPECIFIED NODE TYPE AND NODE IDENTIFIER
+        /// Create a constraint on the specified Node on the specified attribute.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="identifier"></param>

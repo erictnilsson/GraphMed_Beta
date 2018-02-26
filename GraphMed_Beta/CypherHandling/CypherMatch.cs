@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GraphMed_Beta.CypherHandling
 {
     /// <summary>
-    /// USED TO WRITE 'MATCH' CYPHERS
+    /// Used to write 'Match' Cyphers. 
     /// </summary>
     class CypherMatch : CypherBase
     {

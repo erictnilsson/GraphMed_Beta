@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace GraphMed_Beta.FileHandling
 {
     /// <summary>
-    /// USED TO HANDLE THE CSV FILES. 
+    /// Used to handle the .CSV-files that makes the database. 
     /// </summary>
     static class FileHandler
     {
@@ -39,16 +39,16 @@ namespace GraphMed_Beta.FileHandling
             {
                 Console.WriteLine("Validation check failed. Make sure that the file exists. \n" + e.Message);
             }
-            return false; 
+            return false;
         }
 
 
         /// <summary>
-        /// VALIDATES ALL OF THE CSV FILES NEEDED TO BUILD THE GRAPH DATABASE
+        /// Validates all of the .CSV-files needed to build the database. 
         /// </summary>
         public static void ValidateCSVFiles()
         {
-            var csvFiles = new string[] { "fullConcepts", "fullDescriptions", "fullRelationships" };
+            var csvFiles = new string[] { "fullConcepts", "fullDescriptions", "fullRelationships", "fullRefset" };
 
             foreach (var csv in csvFiles)
             {
@@ -102,45 +102,12 @@ namespace GraphMed_Beta.FileHandling
                 }
             }
         }
-
         /// <summary>
-        /// SPLITS UP THE RELATIONSHIP CSV-FILE, ADDING THE TYPEID AS THE KEY AND THE TEXT ROW AS THE VALUE IN A DICTIONARY 
+        /// Splits up the .CSV-file into smaller ones, divided by the TypeId. 
         /// </summary>
-        /// <param name="filepath"></param>
-        /// <returns></returns>
-        public static void SplitRelationshipCSV(string configKey)
-        {
-            var filepath = path + ConfigurationManager.AppSettings[configKey];
-            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
-            if (File.Exists(filepath))
-            {
-                var text = File.ReadAllLines(filepath);
-                var row = new string[0];
-                for (int i = 0; i < text.Length; i++)
-                {
-                    row = text[i].Split('\t');
-                    if (!dict.ContainsKey(row[7]))
-                        dict.Add(row[7], new List<string> { text[i] });
-                    else
-                        dict[row[7]].Add(text[i]);
-                }
-                var headers = dict.ElementAt(0).Value.FirstOrDefault();
-                for (int i = 1; i < dict.Count; i++)
-                {
-                    dict.ElementAt(i).Value.Insert(0, headers);
-                    var content = dict.ElementAt(i).Value.ToArray();
-                    string fileName = Cypher.Get(null).Term(dict.ElementAt(i).Key).Replace("-", "").Replace(" ", "_").ToUpper();
-
-                    File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsedRelationship-" + fileName + ".txt", content);
-                }
-            }
-            else
-            {
-                Console.WriteLine("File not found");
-            }
-        }
-
-        public static void SplitCSV(string configKey, string identifier)
+        /// <param name="configKey"></param>
+        /// <param name="identifier"></param>
+        public static void SplitCSV(string configKey, string identifier, string type)
         {
             var filepath = path + ConfigurationManager.AppSettings[configKey];
             // Dictionary that holds the text as Value and the identifier as the key
@@ -169,13 +136,13 @@ namespace GraphMed_Beta.FileHandling
                     var content = dict.ElementAt(i).Value.ToArray();
                     string fileName = Cypher.Get(null).Term(dict.ElementAt(i).Key).Replace("-", "").Replace(" ", "_").ToUpper();
 
-                    File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsedRefset-" + fileName + ".txt", content); ;
+                    File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsed" + type + "-" + fileName + ".txt", content); ;
                 }
             }
         }
 
         /// <summary>
-        /// FINDS ALL OF THE FILENAMES WITH THE SPECIFIED SEARCH PATTERN IN THE IMPORT DIRECTORY
+        /// Finds all of the filenames in with the specified search pattern in the import directory of Neo4j. 
         /// </summary>
         /// <param name="searchPattern"></param>
         /// <returns></returns>
