@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GraphMed_Beta.Utilities
 {
-/// <summary>
-/// MISCELLANEOUS FUNCTIONS
-/// </summary>
+    /// <summary>
+    /// MISCELLANEOUS FUNCTIONS
+    /// </summary>
     public static class Utils
     {
+
         /// <summary>
         /// GETS THE ATTRIBUTES NEEDED TO CONSTRUCT AN ETITY IN NEO4J
         /// USED WHEN LOADING NODES OR RELATIONSHIPS
@@ -54,6 +58,15 @@ namespace GraphMed_Beta.Utilities
                 indexes.Add(index++);
             }
             return indexes.ToArray();
+        }
+
+        public static void WriteToConfig(string validatedFile)
+        {
+            var valids = File.ReadAllLines(Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Config.txt"));
+            var a = valids[1].Split(',').Length;
+            valids[1] += validatedFile + ", ";
+
+            File.WriteAllLines(Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Config.txt"), valids);
         }
     }
 }

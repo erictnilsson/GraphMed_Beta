@@ -9,6 +9,7 @@ using System.Configuration;
 using GraphMed_Beta.Model.Nodes;
 using System.Diagnostics;
 using System.Threading;
+using GraphMed_Beta.Utilities;
 
 namespace GraphMed_Beta
 {
@@ -18,8 +19,19 @@ namespace GraphMed_Beta
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
+            Install(); 
+            stopwatch.Stop();
+            Console.WriteLine("Process completed in " + stopwatch.ElapsedMilliseconds + "ms");
+            Console.Read();
+        }
 
-            //  ----------------------------
+        private static void Init()
+        {
+
+        }
+
+        private static void Install()
+        {
             Console.WriteLine("Trying to validate all CSV-files...");
             FileHandler.ValidateCSVFiles();
             Console.WriteLine("All files was successfully validatet 100%");
@@ -53,13 +65,6 @@ namespace GraphMed_Beta
             Console.WriteLine("Trying to load all refset relationships...");
             Cypher.Load(limit: null, commit: 20000).Refset();
             Console.WriteLine("All refsets was successfully loaded 100%");
-            //  ----------------------------
-
-            stopwatch.Stop();
-            Console.WriteLine("Process completed in " + stopwatch.ElapsedMilliseconds + "ms");
-            Console.Read();
-
-
         }
     }
 }
