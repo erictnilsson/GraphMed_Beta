@@ -78,6 +78,7 @@
     <Compile Include="CypherHandling\CypherMatch.cs" />
     <Compile Include="FileHandling\FileHandler.cs" />
     <Compile Include="Model\Display\Display.cs" />
+    <Compile Include="Model\Display\Result.cs" />
     <Compile Include="Model\Nodes\Concept.cs" />
     <Compile Include="Model\Nodes\Description.cs" />
     <Compile Include="Model\Nodes\Node.cs" />

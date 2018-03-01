@@ -25,10 +25,13 @@ namespace GraphMed_Beta.CypherHandling
             this.CommitSize = commitSize;
         }
 
-        public void Refset()
+        public void Refset(bool index)
         {
             foreach (var uri in FileHandler.GetFiles("parsedRefset-"))
                 LoadRefset("file:///" + uri.Substring(uri.LastIndexOf("\\") + 1));
+
+            if (index)
+                Cypher.Create().Index("Term", "Term"); 
         }
 
         /// <summary>
@@ -166,7 +169,7 @@ namespace GraphMed_Beta.CypherHandling
             {
                 Connection.Cypher
                           .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
-                          .With("line")
+                          .With(Identifier)
                           .Limit(Limit)
                           .Create("(n: " + node.Name + " {" + Utils.GetBuildString<T>(Identifier) + "})")
                           .ExecuteWithoutResults();

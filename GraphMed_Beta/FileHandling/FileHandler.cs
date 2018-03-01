@@ -136,7 +136,7 @@ namespace GraphMed_Beta.FileHandling
                     var content = dict.ElementAt(i).Value.ToArray();
                     string fileName = Cypher.Get(null).Term(dict.ElementAt(i).Key).Replace("-", "").Replace(" ", "_").ToUpper();
 
-                    File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsed" + type + "-" + fileName + ".txt", content); ;
+                    File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsed" + type + "-" + fileName + ".txt", content); 
                 }
             }
         }

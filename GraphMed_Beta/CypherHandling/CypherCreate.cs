@@ -40,6 +40,29 @@ namespace GraphMed_Beta.CypherHandling
         }
 
         /// <summary>
+        /// Create an index for the specified Node on the specified attribute if the project's node type is not named exactly as the node. E.g. TermNode -> Term
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="identifier"></param>
+        public void Index(string node, string identifier)
+        {
+            try
+            {
+                Connection.Cypher
+                     .Create("INDEX ON: " + node + "(" + identifier + ")")
+                     .ExecuteWithoutResults();
+            }
+            catch (NeoException)
+            {
+                throw;
+            }
+            finally
+            {
+                Connection.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Create a constraint on the specified Node on the specified attribute.
         /// </summary>
         /// <typeparam name="T"></typeparam>

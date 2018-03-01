@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GraphMed_Beta.Model.Display;
+using GraphMed_Beta.Model.Nodes;
+using Neo4j.Driver.V1;
 using Neo4jClient;
 
 namespace GraphMed_Beta.CypherHandling
@@ -44,8 +46,9 @@ namespace GraphMed_Beta.CypherHandling
             }
         }
 
-        public IEnumerable<string> Get(string searchTerm, char relatives, int limit, string acceptability, string langCode)
+        public Result Get(string searchTerm, char relatives, int limit, string acceptability, string langCode)
         {
+            Result returnResult = new Result();
             var lang = "900000000000508004"; //default GB
             var point = "--"; //default point at everything; family
             var rel = "PREFERRED"; //default relationship is PREFERRED
@@ -87,15 +90,46 @@ namespace GraphMed_Beta.CypherHandling
             {
                 if (int.TryParse(searchTerm, out int n))
                 {
-                    return Connection.Cypher
-                                .Match("(c:Concept{Id:'" + searchTerm + "'})" + point + "(cc:Concept)<-[:REFERS_TO]-(d:Description{Active:'1'})-[r:" + rel + "{RefsetId: '" + lang + "'}]->(t:Term)")
+                    var result = Connection.Cypher
+                                .Match("(t:Term)<-[:" + rel + "{RefsetId: '" + lang + "'}]-(d:Description)-[:REFERS_TO]->(c:Concept{Id: '" + searchTerm + "'})" + point + "(cc:Concept)<-[:REFERS_TO]-(dd:Description)-[:" + rel + "{RefsetId:'" + lang + "'}]->(tt:Term)")
                                 .UsingIndex("c:Concept(Id)")
-                                .Return<string>("t.Term")
-                                .Results; 
-                } else
-                {
-                }
+                                .Where("d.Active='1'")
+                                .AndWhere("dd.Active='1'")
+                                .Return((t, c, tt, cc) => new
+                                {
+                                    AnchorId = c.As<Concept>().Id,
+                                    AnchorTerm = t.As<TermNode>().Term,
+                                    cc.As<Concept>().Id,
+                                    tt.As<TermNode>().Term
+                                })
+                                .Results;
 
+                    returnResult = new Result(result.FirstOrDefault().Id, result.FirstOrDefault().Term);
+
+                    foreach (var obj in result)
+                        returnResult.Results.Add(new Display(obj.Id, obj.Term));
+                }
+                else
+                {
+                    var result = Connection.Cypher
+                                 .Match("(t:Term{Term:'" + searchTerm + "'})<-[{RefsetId:'" + lang + "'}]-(d:Description)-[:REFERS_TO]->(c:Concept)" + point + "(cc:Concept)<-[REFERS_TO]-(dd:Description)-[:" + rel + "{RefsetId:'" + lang + "'}]->(tt:Term)")
+                                 .Where("d.Active = '1'")
+                                 .AndWhere("dd.Active = '1'")
+                                 .Return((t, c, tt, cc) => new
+                                 {
+                                     AnchorId = c.As<Concept>().Id,
+                                     AnchorTerm = t.As<TermNode>().Term,
+                                     cc.As<Concept>().Id,
+                                     tt.As<TermNode>().Term
+                                 })
+                                 .Results;
+
+                    returnResult = new Result(result.FirstOrDefault().Id, result.FirstOrDefault().Term);
+
+                    foreach (var obj in result)
+                        returnResult.Results.Add(new Display(obj.Id, obj.Term));
+                }
+                return returnResult;
             }
             catch (NeoException)
             {
@@ -105,7 +139,6 @@ namespace GraphMed_Beta.CypherHandling
             {
                 Connection.Dispose();
             }
-            return null;
         }
     }
 }
