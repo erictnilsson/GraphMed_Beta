@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphMed_Beta", "GraphMed_Beta\GraphMed_Beta.csproj", "{CAF7E5BC-5FAA-488D-8675-36D53B6FF482}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphMed_UnitTest", "GraphMed_UnitTest\GraphMed_UnitTest.csproj", "{E183BB89-D6E4-4DE4-A5F8-DE74EB5D47E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{CAF7E5BC-5FAA-488D-8675-36D53B6FF482}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAF7E5BC-5FAA-488D-8675-36D53B6FF482}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAF7E5BC-5FAA-488D-8675-36D53B6FF482}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E183BB89-D6E4-4DE4-A5F8-DE74EB5D47E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E183BB89-D6E4-4DE4-A5F8-DE74EB5D47E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E183BB89-D6E4-4DE4-A5F8-DE74EB5D47E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E183BB89-D6E4-4DE4-A5F8-DE74EB5D47E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

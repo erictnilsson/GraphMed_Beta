@@ -5,16 +5,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GraphMed_Beta.FileHandling
 {
     /// <summary>
     /// Used to handle the .CSV-files that makes the database. 
     /// </summary>
-    static class FileHandler
+    public static class FileHandler
     {
         private static string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
@@ -37,7 +35,7 @@ namespace GraphMed_Beta.FileHandling
             }
             catch (Exception e)
             {
-                Console.WriteLine("Validation check failed. Make sure that the file exists. \n" + e.Message);
+                Console.WriteLine("Validation check failed: \n" + e.Message);
             }
             return false;
         }
@@ -56,15 +54,25 @@ namespace GraphMed_Beta.FileHandling
             }
         }
 
+        public static void SplitRelationshipFile()
+        {
+            SplitCSV("fullRelationship", "typeId", "Relationship");
+        }
+
+        public static void SplitRefsetFile()
+        {
+            SplitCSV("fullRefset", "acceptabilityId", "Refset");
+        }
+
 
         /// <summary>
-        /// Validates the targeted .CSV-file; correcting the use of quotation marks so it can be loaded into Neo4j. 
+        /// Validates the targeted .txt-file; correcting the use of quotation marks so it can be loaded into Neo4j. 
         /// </summary>
         /// <param name="filepath"></param>
         public static void ValidateCSV(string file)
         {
             var filepath = path + ConfigurationManager.AppSettings[file];
-            if (!IsValidated(file))
+            if (!IsValidated(file) && File.Exists(filepath))
             {
                 try
                 {
@@ -98,22 +106,33 @@ namespace GraphMed_Beta.FileHandling
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Validation failed. Make sure that the file exists. \n" + e.Message);
+                    Console.WriteLine("Validation failed: \n" + e.Message);
                 }
+            }
+            else
+            {
+                Console.WriteLine("Validation failed. \n" +
+                    "The filepath \"" + filepath + "\" does not seem to be valid or exist.\n" +
+                    "Make sure that the file is a \".txt\"-file delimited by tabs.");
             }
         }
         /// <summary>
-        /// Splits up the .CSV-file into smaller ones, divided by the TypeId. 
+        /// Splits up the .CSV-file into smaller ones, divided by the specified identifier. 
         /// </summary>
         /// <param name="configKey"></param>
         /// <param name="identifier"></param>
         public static void SplitCSV(string configKey, string identifier, string type)
         {
             var filepath = path + ConfigurationManager.AppSettings[configKey];
-            // Dictionary that holds the text as Value and the identifier as the key
-            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
             if (File.Exists(filepath))
             {
+                if (identifier == null || type == null)
+                {
+                    Console.WriteLine("Either the identifier or type is null. Please make sure that both fields are valid strings.");
+                }
+
+                // Dictionary that holds the text as Value and the identifier as the key
+                Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
                 var text = File.ReadAllLines(filepath);
                 var row = new string[0];
                 var index = 0;
@@ -123,21 +142,47 @@ namespace GraphMed_Beta.FileHandling
 
                     if (i == 0)
                         index = Array.IndexOf(row, identifier);
-
-                    if (!dict.ContainsKey(row[index]))
-                        dict.Add(row[index], new List<string> { text[i] });
+                    if (index == -1)
+                    {
+                        Console.WriteLine("The identifier \"" + identifier + "\" does not seem to exist withing the given context and therefore the file could not be parsed. \n" +
+                            "Please make sure that the identifier is a valid column header in the .txt-file \"" + filepath + "\".");
+                        break;
+                    }
                     else
-                        dict[row[index]].Add(text[i]);
+                    {
+                        if (!dict.ContainsKey(row[index]))
+                            dict.Add(row[index], new List<string> { text[i] });
+                        else
+                            dict[row[index]].Add(text[i]);
+                    }
                 }
-                var headers = dict.ElementAt(0).Value.FirstOrDefault();
-                for (int i = 1; i < dict.Count; i++)
+                if (index != -1)
                 {
-                    dict.ElementAt(i).Value.Insert(0, headers);
-                    var content = dict.ElementAt(i).Value.ToArray();
-                    string fileName = Cypher.Get(null).Term(dict.ElementAt(i).Key).Replace("-", "").Replace(" ", "_").ToUpper();
+                    var headers = dict.ElementAt(0).Value.FirstOrDefault();
+                    for (int i = 1; i < dict.Count; i++)
+                    {
+                        dict.ElementAt(i).Value.Insert(0, headers);
+                        var content = dict.ElementAt(i).Value.ToArray();
+                        var getCypher = Cypher.Get(null);
+                        if (getCypher.Connection.IsConnected)
+                        {
+                            string fileName = getCypher.Term(dict.ElementAt(i).Key).Replace("-", "").Replace(" ", "_").ToUpper();
+                            File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsed" + type + "-" + fileName + ".txt", content);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Make sure that Neo4j is connected and running before splitting any \".txt\"-files.");
+                            break;
+                        }
 
-                    File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsed" + type + "-" + fileName + ".txt", content); 
+                    }
                 }
+            }
+            else
+            {
+                Console.WriteLine("Validation failed. \n" +
+                   "The filepath \"" + filepath + "\" does not seem to be valid or exist.\n" +
+                   "Make sure that the file is a \".txt\"-file delimited by tabs.");
             }
         }
 

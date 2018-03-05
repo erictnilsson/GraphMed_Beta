@@ -2,13 +2,8 @@
 using GraphMed_Beta.Model.Nodes;
 using GraphMed_Beta.Model.Relationships;
 using GraphMed_Beta.Utilities;
-using Neo4jClient;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraphMed_Beta.CypherHandling
 {
@@ -25,13 +20,13 @@ namespace GraphMed_Beta.CypherHandling
             this.CommitSize = commitSize;
         }
 
-        public void Refset(bool index)
+        public void Refset(bool index = true)
         {
             foreach (var uri in FileHandler.GetFiles("parsedRefset-"))
                 LoadRefset("file:///" + uri.Substring(uri.LastIndexOf("\\") + 1));
 
             if (index)
-                Cypher.Create().Index("Term", "Term"); 
+                Cypher.Create().Index("Term", "Term");
         }
 
         /// <summary>
@@ -45,60 +40,70 @@ namespace GraphMed_Beta.CypherHandling
 
         /// <summary>
         /// Loads all Concepts with our without indexing the Concepts on 'Id'.
+        /// Indexing is enabled as default. 
         /// </summary>
         /// <param name="index"></param>
-        public void Concepts(bool index)
+        public void Concepts(bool constrain = true)
         {
             var uri = ConfigurationManager.AppSettings["concepts"];
             LoadNodes<Concept>(uri);
 
-            if (index)
-                Cypher.Create().Index<Concept>("Id");
+            if (constrain)
+                Cypher.Create().Constraint<Concept>("Id");
         }
 
         /// <summary>
-        /// Loads all Descriptions with or without indexing on 'ConceptId' and constraining on 'Id'.
+        /// Loads all Descriptions with or without forcing an anchoring relationship with a Concept-Node,
+        /// indexing on 'ConceptId', 
+        /// and constraining on 'Id'.
         /// </summary>
         /// <param name="forceRelationship"></param>
         /// <param name="index"></param>
         /// <param name="constrain"></param>
-        public void Descriptions(bool forceRelationship, bool index, bool constrain)
+        public void Descriptions(bool forceRelationship = true, bool index = true, bool constrain = true)
         {
             var uri = ConfigurationManager.AppSettings["descriptions"];
+            if (Connection.IsConnected)
+            {
+                if (forceRelationship)
+                    LoadRelationalDescriptions(uri);
+                else
+                    LoadNodes<Description>(uri);
 
-            if (forceRelationship)
-                LoadRelationalDescriptions(uri);
+                if (index)
+                    Cypher.Create().Index<Description>("ConceptId");
+                if (constrain)
+                    Cypher.Create().Constraint<Description>("Id");
+            }
             else
-                LoadNodes<Description>(uri);
-
-            if (index)
-                Cypher.Create().Index<Description>("ConceptId");
-            if (constrain)
-                Cypher.Create().Constraint<Description>("Id");
+            {
+                Console.WriteLine("It seems like you don't have a connection with Neo4j... \n" +
+                        "Make sure that an instance of Neo4j is connected and running before calling any cypher.");
+            }
         }
 
+        /// <summary>
+        /// Loads the refsets of the specified .CSV URI; creating a refset-relationship and a Term-node
+        /// </summary>
+        /// <param name="uri"></param>
         private void LoadRefset(string uri)
         {
-            var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
-            try
+            if (uri != null)
             {
-                Connection.Cypher
-                          .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
-                          .With(Identifier)
-                          .Limit(Limit)
-                          .Match("(d:Description)")
-                          .Where("d.Id = " + Identifier + ".referencedComponentId")
-                          .Create("(d)-[:" + relationship + "{ " + Utils.GetBuildString<Refset>(Identifier) + "}]->(t:Term {Id: "+ Identifier + ".referencedComponentId, Term: d.Term})")
-                          .ExecuteWithoutResults();
+                var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
+                var cypher = Connection.Cypher
+                                  .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                                  .With(Identifier)
+                                  .Limit(Limit)
+                                  .Match("(d:Description)")
+                                  .Where("d.Id = " + Identifier + ".referencedComponentId")
+                                  .Create("(d)-[:" + relationship + "{ " + Utils.GetBuildString<Refset>(Identifier) + "}]->(t:Term {Id: " + Identifier + ".referencedComponentId, Term: d.Term})");
+
+                ExecuteWithoutResults(cypher);
             }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            else
+                Console.WriteLine("The URI seems to not exist... " +
+                  "Make sure it does.");
         }
 
         /// <summary>
@@ -107,27 +112,24 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="uri"></param>
         private void LoadRelationships(string uri)
         {
-            var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
-            try
+            if (uri != null)
             {
-                Connection.Cypher
-                          .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
-                          .With(Identifier)
-                          .Limit(Limit)
-                          .Match("(c:Concept)", "(cc:Concept)")
-                          .Where("c.Id = " + Identifier + ".sourceId")
-                          .AndWhere("cc.Id = " + Identifier + ".destinationId")
-                          .Create("(c)-[:" + relationship + " {" + Utils.GetBuildString<Determinant>(Identifier) + "}]->(cc)")
-                          .ExecuteWithoutResults();
+                var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
+                var cypher = Connection.Cypher
+                                  .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                                  .With(Identifier)
+                                  .Limit(Limit)
+                                  .Match("(c:Concept)", "(cc:Concept)")
+                                  .Where("c.Id = " + Identifier + ".sourceId")
+                                  .AndWhere("cc.Id = " + Identifier + ".destinationId")
+                                  .Create("(c)-[:" + relationship + " {" + Utils.GetBuildString<Determinant>(Identifier) + "}]->(cc)");
+
+                ExecuteWithoutResults(cypher);
             }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            else
+                Console.WriteLine("The URI seems to not exist... " +
+                  "Make sure it does.");
+
         }
 
         /// <summary>
@@ -136,25 +138,22 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="uri"></param>
         private void LoadRelationalDescriptions(string uri)
         {
-            try
+            if (uri != null)
             {
-                Connection.Cypher
-                          .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
-                          .With(Identifier)
-                          .Limit(Limit)
-                          .Match("(c:Concept)")
-                          .Where("c.Id = " + Identifier + ".conceptId")
-                          .Create("(d: Description {" + Utils.GetBuildString<Description>(Identifier) + "})-[:REFERS_TO]->(c)")
-                          .ExecuteWithoutResults();
+                var cypher = Connection.Cypher
+                           .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                           .With(Identifier)
+                           .Limit(Limit)
+                           .Match("(c:Concept)")
+                           .Where("c.Id = " + Identifier + ".conceptId")
+                           .Create("(d: Description {" + Utils.GetBuildString<Description>(Identifier) + "})-[:REFERS_TO]->(c)");
+
+                ExecuteWithoutResults(cypher);
             }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            else
+                Console.WriteLine("The URI seems to not exist... " +
+                   "Make sure it does.");
+
         }
 
         /// <summary>
@@ -164,24 +163,21 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="uri"></param>
         private void LoadNodes<T>(string uri)
         {
-            var node = typeof(T);
-            try
+            if (uri != null)
             {
-                Connection.Cypher
-                          .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
-                          .With(Identifier)
-                          .Limit(Limit)
-                          .Create("(n: " + node.Name + " {" + Utils.GetBuildString<T>(Identifier) + "})")
-                          .ExecuteWithoutResults();
+                var node = typeof(T);
+                var query = Connection.Cypher
+                                  .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                                  .With(Identifier)
+                                  .Limit(Limit)
+                                  .Create("(n: " + node.Name + " {" + Utils.GetBuildString<T>(Identifier) + "})");
+
+                ExecuteWithoutResults(query);
             }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            else
+                Console.WriteLine("The URI seems to not exist... " +
+                    "Make sure it does.");
+
         }
     }
 }

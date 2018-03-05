@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Neo4jClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,22 +18,22 @@ namespace GraphMed_Beta.CypherHandling
             return new CypherCreate();
         }
 
-        public static CypherLoad Load(int? limit, int? commit)
+        public static CypherLoad Load(int? limit = null, int? commit = 10000)
         {
             return new CypherLoad(limit, commit);
         }
 
-        public static CypherMatch Match(int? limit)
+        public static CypherMatch Match(int? limit = null)
         {
             return new CypherMatch(limit);
         }
 
-        public static CypherGet Get(int? limit)
+        public static CypherGet Get(int? limit = null)
         {
             return new CypherGet(limit);
         }
 
-        public static CypherDelete Delete(int? limit)
+        public static CypherDelete Delete(int? limit = null)
         {
             return new CypherDelete(limit); 
         }
@@ -41,7 +42,5 @@ namespace GraphMed_Beta.CypherHandling
         {
             return new CypherDrop(); 
         }
-
-
     }
 }

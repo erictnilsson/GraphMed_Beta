@@ -22,21 +22,10 @@ namespace GraphMed_Beta.CypherHandling
         public void Index<T>(string identifier)
         {
             var node = typeof(T);
-            try
-            {
-                Connection.Cypher
-                     .Create("INDEX ON: " + node.Name + "(" + identifier + ")")
-                     .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            var cypher = Connection.Cypher
+                       .Create("INDEX ON: " + node.Name + "(" + identifier + ")");
 
+            ExecuteWithoutResults(cypher);
         }
 
         /// <summary>
@@ -46,20 +35,10 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="identifier"></param>
         public void Index(string node, string identifier)
         {
-            try
-            {
-                Connection.Cypher
-                     .Create("INDEX ON: " + node + "(" + identifier + ")")
-                     .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            var cypher = Connection.Cypher
+                      .Create("INDEX ON: " + node + "(" + identifier + ")");
+
+            ExecuteWithoutResults(cypher);
         }
 
         /// <summary>
@@ -70,20 +49,10 @@ namespace GraphMed_Beta.CypherHandling
         public void Constraint<T>(string identifier)
         {
             var node = typeof(T);
-            try
-            {
-                Connection.Cypher
-                          .CreateUniqueConstraint("n: " + node.Name, "n." + identifier)
-                          .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            var cypher = Connection.Cypher
+                           .CreateUniqueConstraint("n: " + node.Name, "n." + identifier);
+
+            ExecuteWithoutResults(cypher);
         }
     }
 }

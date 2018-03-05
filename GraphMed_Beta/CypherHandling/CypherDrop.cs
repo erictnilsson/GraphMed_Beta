@@ -24,7 +24,7 @@ namespace GraphMed_Beta.CypherHandling
         {
             Index<Description>();
             Constraint<Description>();
-            Index<Concept>(); 
+            Index<Concept>();
         }
 
         /// <summary>
@@ -64,19 +64,9 @@ namespace GraphMed_Beta.CypherHandling
         private void DropConstraint<Node>(string identifier, string constraint)
         {
             var node = typeof(Node);
-            try
-            {
-                Connection.Cypher.Drop("CONSTRAINT ON (n:" + node.Name + ") ASSERT n." + identifier + " " + constraint)
-                        .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            var cypher = Connection.Cypher.Drop("CONSTRAINT ON (n:" + node.Name + ") ASSERT n." + identifier + " " + constraint);
+
+            ExecuteWithoutResults(cypher);
         }
 
         /// <summary>
@@ -87,19 +77,9 @@ namespace GraphMed_Beta.CypherHandling
         private void DropIndex<Node>(string identifier)
         {
             var node = typeof(Node);
-            try
-            {
-                Connection.Cypher.Drop("INDEX ON :" + node.Name + " (" + identifier + ")")
-                     .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            var cypher = Connection.Cypher.Drop("INDEX ON :" + node.Name + " (" + identifier + ")");
+
+            ExecuteWithoutResults(cypher);
         }
     }
 }

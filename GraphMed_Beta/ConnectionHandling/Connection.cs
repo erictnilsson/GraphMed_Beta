@@ -14,11 +14,11 @@ namespace GraphMed_Beta.ConnectionHandling
 /// </summary>
     class Connection : IDisposable
     {
-        private static string User { get; set; }
-        private static string Pass { get; set; }
-        private static string Uri { get; set; }
+        public static string User { get; private set; }
+        public static string Pass { get; private set; }
+        public static string Uri { get; private set; }
 
-        private static HttpClient HttpClient { get; set; }
+        public static HttpClient HttpClient { get; private set; }
 
         /// <summary>
         /// Connection to the Neo4j Client with a default timeout set to 1 minute. 
@@ -52,7 +52,18 @@ namespace GraphMed_Beta.ConnectionHandling
         public GraphClient Connect()
         {
             var client = new GraphClient(new Uri(Uri), new HttpClientWrapper(User, Pass, HttpClient));
-            client.Connect();
+            try
+            {
+                client.Connect();
+            } catch (HttpRequestException)
+            {
+                Dispose();   
+            } catch (Exception e)
+            {
+                Console.WriteLine("There seems to be an error with the connection: " + e.Message);
+                Dispose(); 
+            }
+           
             return client; 
         }
 

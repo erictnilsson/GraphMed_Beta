@@ -11,6 +11,7 @@ namespace GraphMed_Beta.Model.Display
     {
         public string ConceptId { get; set; }
         public string Term { get; set; }
+        public string Relationship { get; set; }
 
         public Display() { }
 
@@ -18,6 +19,13 @@ namespace GraphMed_Beta.Model.Display
         {
             this.ConceptId = conceptId;
             this.Term = term;
+        }
+
+        public Display(string conceptId, string term, string relationship)
+        {
+            this.ConceptId = conceptId;
+            this.Term = term;
+            this.Relationship = relationship; 
         }
 
         public void Print()

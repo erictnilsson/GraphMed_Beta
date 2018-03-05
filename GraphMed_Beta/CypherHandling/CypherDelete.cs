@@ -22,23 +22,13 @@ namespace GraphMed_Beta.CypherHandling
         /// </summary>
         public void DetachDelete()
         {
-            try
-            {
-                Connection.Cypher
-                          .Match("(n)")
-                          .With("n")
-                          .Limit(Limit)
-                          .DetachDelete("(n)")
-                          .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            var cypher = Connection.Cypher
+                            .Match("(n)")
+                            .With("n")
+                            .Limit(Limit)
+                            .DetachDelete("(n)");
+
+            ExecuteWithoutResults(cypher); 
         }
 
 
@@ -47,23 +37,14 @@ namespace GraphMed_Beta.CypherHandling
         /// </summary>
         public void Delete()
         {
-            try
-            {
-                Connection.Cypher
+            var cypher = Connection.Cypher
                           .Match("(n)")
                           .With("n")
                           .Limit(Limit)
-                          .Delete("(n)")
-                          .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+                          .Delete("(n)");
+
+            ExecuteWithoutResults(cypher); 
+         
         }
 
         /// <summary>
@@ -73,23 +54,13 @@ namespace GraphMed_Beta.CypherHandling
         public void Delete<Node>()
         {
             var node = typeof(Node);
-            try
-            {
-                Connection.Cypher
-                          .Match("(n: " + node.Name + ")")
-                          .With("n")
-                          .Limit(Limit)
-                          .Delete("(n)")
-                          .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            var cypher = Connection.Cypher
+                           .Match("(n: " + node.Name + ")")
+                           .With("n")
+                           .Limit(Limit)
+                           .Delete("(n)");
+
+            ExecuteWithoutResults(cypher); 
         }
 
         /// <summary>
@@ -99,23 +70,13 @@ namespace GraphMed_Beta.CypherHandling
         public void DetachDelete<Node>()
         {
             var node = typeof(Node);
-            try
-            {
-                Connection.Cypher
-                          .Match("(n: " + node.Name + ")")
-                          .With("n")
-                          .Limit(Limit)
-                          .DetachDelete("n")
-                          .ExecuteWithoutResults();
-            }
-            catch (NeoException)
-            {
-                throw;
-            }
-            finally
-            {
-                Connection.Dispose();
-            }
+            var cypher = Connection.Cypher
+                            .Match("(n: " + node.Name + ")")
+                            .With("n")
+                            .Limit(Limit)
+                            .DetachDelete("n");
+
+            ExecuteWithoutResults(cypher); 
         }
     }
 }
