@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionHandling\Connection.cs" />
+    <Compile Include="CurrentConfig.cs" />
     <Compile Include="CypherHandling\CypherBase.cs" />
     <Compile Include="CypherHandling\CypherCreate.cs" />
     <Compile Include="CypherHandling\Cypher.cs" />
@@ -95,9 +96,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Config.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

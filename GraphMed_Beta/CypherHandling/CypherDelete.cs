@@ -1,5 +1,6 @@
 ﻿using GraphMed_Beta.Model.Nodes;
 using Neo4jClient;
+using Neo4jClient.Cypher;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace GraphMed_Beta.CypherHandling
                             .Limit(Limit)
                             .DetachDelete("(n)");
 
-            ExecuteWithoutResults(cypher); 
+            ExecuteWithoutResults(cypher);
         }
 
 
@@ -43,8 +44,8 @@ namespace GraphMed_Beta.CypherHandling
                           .Limit(Limit)
                           .Delete("(n)");
 
-            ExecuteWithoutResults(cypher); 
-         
+            ExecuteWithoutResults(cypher);
+
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace GraphMed_Beta.CypherHandling
                            .Limit(Limit)
                            .Delete("(n)");
 
-            ExecuteWithoutResults(cypher); 
+            ExecuteWithoutResults(cypher);
         }
 
         /// <summary>
@@ -76,7 +77,34 @@ namespace GraphMed_Beta.CypherHandling
                             .Limit(Limit)
                             .DetachDelete("n");
 
-            ExecuteWithoutResults(cypher); 
+            ExecuteWithoutResults(cypher);
+        }
+
+        /// <summary>
+        /// Used internally to count all of the nodes in the database. 
+        /// </summary>
+        /// <returns></returns>
+        private int CountNodes()
+        {
+            var cypher = Connection.Cypher
+                .Match("(n)")
+                .With("n")
+                .Return<int>("count(n)");
+
+            return ExecuteWithResults(cypher).First();
+        }
+
+        public void Alles()
+        {
+            var count = Cypher.Delete().CountNodes();
+            Console.WriteLine("There are " + count + " nodes in the database. The deleting process may take several minutes. Please hold...");
+            while (Cypher.Delete().CountNodes() > 0)
+            {
+                Cypher.Delete(100_000).DetachDelete();
+                if (count % 100_000 == 0)
+                    Console.WriteLine(Cypher.Delete().CountNodes() + " nodes left in the database");
+            }
+            Console.WriteLine("All " + count + " nodes deleted");
         }
     }
 }

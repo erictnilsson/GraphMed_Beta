@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Configuration; 
+using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
@@ -9,9 +9,9 @@ using Neo4jClient;
 
 namespace GraphMed_Beta.ConnectionHandling
 {
-/// <summary>
-/// Used to connect to the Neo4j client enabling the use of cyphers. 
-/// </summary>
+    /// <summary>
+    /// Used to connect to the Neo4j client enabling the use of cyphers. 
+    /// </summary>
     class Connection : IDisposable
     {
         public static string User { get; private set; }
@@ -29,7 +29,7 @@ namespace GraphMed_Beta.ConnectionHandling
             Pass = ConfigurationManager.AppSettings["GraphDBPassword"];
             Uri = ConfigurationManager.AppSettings["ClientUri"];
 
-            HttpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(1D) }; 
+            HttpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(1D) };
         }
 
         /// <summary>
@@ -38,11 +38,11 @@ namespace GraphMed_Beta.ConnectionHandling
         /// <param name="timeout"></param>
         public Connection(double timeout)
         {
-            User = ConfigurationManager.AppSettings["GraphDBUser"];
-            Pass = ConfigurationManager.AppSettings["GraphDBPassword"];
-            Uri = ConfigurationManager.AppSettings["ClientUri"];
+            User = CurrentConfig.Instance.GraphDBUser;
+            Pass = CurrentConfig.Instance.GraphDBPassword;
+            Uri = CurrentConfig.Instance.GraphDBUri;
 
-            HttpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(timeout)};
+            HttpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(timeout) };
         }
 
         /// <summary>
@@ -51,20 +51,23 @@ namespace GraphMed_Beta.ConnectionHandling
         /// <returns></returns>
         public GraphClient Connect()
         {
+            //Handle null
             var client = new GraphClient(new Uri(Uri), new HttpClientWrapper(User, Pass, HttpClient));
             try
             {
                 client.Connect();
-            } catch (HttpRequestException)
+            }
+            catch (HttpRequestException)
             {
-                Dispose();   
-            } catch (Exception e)
+                Dispose();
+            }
+            catch (Exception e)
             {
                 Console.WriteLine("There seems to be an error with the connection: " + e.Message);
-                Dispose(); 
+                Dispose();
             }
-           
-            return client; 
+
+            return client;
         }
 
         /// <summary>
@@ -73,7 +76,7 @@ namespace GraphMed_Beta.ConnectionHandling
         public void Dispose()
         {
             HttpClient?.Dispose();
-            GC.SuppressFinalize(this); 
+            GC.SuppressFinalize(this);
         }
     }
 }

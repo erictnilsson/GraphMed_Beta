@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GraphMed_Beta.Model.Display;
 using GraphMed_Beta.Model.Nodes;
 using Neo4jClient;
@@ -30,23 +31,23 @@ namespace GraphMed_Beta.CypherHandling
             return ExecuteWithResults(cypher).First();
         }
 
-        public Result Nodes(string searchTerm, char relatives, int limit, string acceptability, string langCode)
+        public Result Nodes(string searchTerm, string relatives, string limit, string acceptability, string langCode)
         {
             Result returnResult = new Result();
             var lang = "900000000000508004"; //default GB
             var point = "--"; //default point at everything; family
             var rel = "PREFERRED"; //default relationship is PREFERRED
-
+            var lim = Int32.Parse(limit);
             switch (relatives)
             {
-                case 'p':
-                    point = "-[r*.." + limit + "]->";
+                case "p":
+                    point = "-[r*.." + lim + "]->";
                     break;
-                case 'c':
-                    point = "<-[r*.." + limit + "]-";
+                case "c":
+                    point = "<-[r*.." + lim + "]-";
                     break;
-                case 'f':
-                    point = "-[r*.." + limit + "]-";
+                case "f":
+                    point = "-[r*.." + lim + "]-";
                     break;
             }
 

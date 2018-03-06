@@ -1,5 +1,6 @@
 ﻿using GraphMed_Beta.CypherHandling;
 using GraphMed_Beta.FileHandling;
+using Neo4jClient;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -10,18 +11,55 @@ namespace GraphMed_Beta
     {
         static void Main(string[] args)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            Init(); 
-            stopwatch.Stop(); 
-            Console.WriteLine("Process completed in " + stopwatch.ElapsedMilliseconds + "ms");
-            Console.Read();
+            bool running = true;
+
+            while (running)
+            {
+                args = Console.ReadLine().Split(' ');
+                string cmd = args[0].Substring(0, 3).ToUpper();
+                switch (cmd)
+                {
+                    case "-S=":
+                        var search = Cypher.Get().Nodes(searchTerm: args[1], relatives: args[2], limit: args[3], acceptability: args[4], langCode: args[5]);
+                        Console.WriteLine("Id: " + search.Id);
+                        Console.WriteLine("Term: " + search.Term);
+                        foreach (var s in search.Results)
+                        {
+                            Console.WriteLine("ConceptId: " + s.ConceptId);
+                            Console.WriteLine("Term: " + s.Term);
+                        }
+
+                        break;
+                    case "-L=":
+                        string user = args[0].Remove(0, 3);
+                        CurrentConfig.Instance.GraphDBUser = user;
+                        CurrentConfig.Instance.GraphDBPassword = args[1];
+                        CurrentConfig.Instance.GraphDBUri = args[2];
+
+                        Console.WriteLine("L!");
+                        break;
+                    case "-I=":
+                        string path = args[0].Remove(0, 3);
+                        CurrentConfig.Instance.SnomedVersion = @args[2];
+                        CurrentConfig.Instance.SnomedImportPath = @path;
+                        CurrentConfig.Instance.TargetPath = @args[1];
+                        FileHandler.MoveFiles();
+
+                        Install();
+                        Console.WriteLine("I!");
+                        break;
+                    case "-Q=":
+                        running = false;
+                        break;
+                }
+                args = new string[0];
+            }
         }
 
         private static void Init()
         {
-            var a = Cypher.Get().Nodes("Duckbill flathead", 'f', 1, "pref", "GB");
-            Console.WriteLine(a.Id + ", " + a.Term + ", " + a.Results); 
+            //var a = Cypher.Get().Nodes("Duckbill flathead", 'f', 1, "pref", "GB");
+            //Console.WriteLine(a.Id + ", " + a.Term + ", " + a.Results);
         }
 
         private static void Install()
@@ -42,7 +80,7 @@ namespace GraphMed_Beta
             Thread.Sleep(1000);
 
             Console.WriteLine("Trying to parse the Relationship CSV-file...");
-            FileHandler.SplitCSV("fullRelationships", "typeId", "Relationship");
+            FileHandler.SplitCSV("Relationship", "typeId");
             Console.WriteLine("The Relationship CSV-file was successfully parsed 100%");
             Thread.Sleep(3000);
 
@@ -52,7 +90,7 @@ namespace GraphMed_Beta
             Thread.Sleep(1000);
 
             Console.WriteLine("Trying to parse the Refset CSV-file...");
-            FileHandler.SplitCSV("fullRefset", "acceptabilityId", "Refset");
+            FileHandler.SplitCSV("Refset", "acceptabilityId");
             Console.WriteLine("The Refset CSV-file successfully was parsed 100%");
             Thread.Sleep(3000);
 

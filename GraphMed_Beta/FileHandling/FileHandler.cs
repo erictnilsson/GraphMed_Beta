@@ -16,37 +16,18 @@ namespace GraphMed_Beta.FileHandling
     {
         private static string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-        /// <summary>
-        /// Checks to see whether the file already is validated or not. 
-        /// Returns true if validated, false if not.
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public static bool IsValidated(string file)
-        {
-            // gets the current directory and combines the path with Config.txt in the project folder
-            // then takes the second line of the file (Config.txt), splitting the values by ','
-            var valids = File.ReadAllLines(Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Config.txt"))[1].Split(',');
-            try
-            {
-                foreach (var v in valids)
-                    if (v.Trim().Equals(file))
-                        return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Validation check failed: \n" + e.Message);
-            }
-            return false;
-        }
-
 
         /// <summary>
         /// Validates all of the .CSV-files needed to build the database. 
         /// </summary>
         public static void ValidateCSVFiles()
         {
-            var csvFiles = new string[] { "fullConcepts", "fullDescriptions", "fullRelationships", "fullRefset" };
+            var csvFiles = new string[] {
+                CurrentConfig.Instance.FullConcept,
+                CurrentConfig.Instance.FullDescription,
+                CurrentConfig.Instance.FullRelationship,
+                CurrentConfig.Instance.FullRefset
+            };
 
             foreach (var csv in csvFiles)
             {
@@ -56,12 +37,12 @@ namespace GraphMed_Beta.FileHandling
 
         public static void SplitRelationshipFile()
         {
-            SplitCSV("fullRelationship", "typeId", "Relationship");
+            SplitCSV("Relationship", "typeId");
         }
 
         public static void SplitRefsetFile()
         {
-            SplitCSV("fullRefset", "acceptabilityId", "Refset");
+            SplitCSV("Refset", "acceptabilityId");
         }
 
 
@@ -72,7 +53,7 @@ namespace GraphMed_Beta.FileHandling
         public static void ValidateCSV(string file)
         {
             var filepath = path + ConfigurationManager.AppSettings[file];
-            if (!IsValidated(file) && File.Exists(filepath))
+            if (File.Exists(filepath))
             {
                 try
                 {
@@ -88,21 +69,26 @@ namespace GraphMed_Beta.FileHandling
                             var val = row[j];
                             if (val.Contains("\""))
                             {
-                                var line = new StringBuilder(val);
-                                var tick = 0;
-                                foreach (var index in Utils.FindAllIndexesOf(val, "\""))
+                                //if the next character after the first quotation mark is also a quotation mark,
+                                //we can assume that the file is already validated so break
+                                if (!val[val.IndexOf("\"") + 2].Equals("\""))
                                 {
-                                    line.Insert(index + tick, "\"");
-                                    tick++;
+                                    var line = new StringBuilder(val);
+                                    var tick = 0;
+                                    foreach (var index in Utils.FindAllIndexesOf(val, "\""))
+                                    {
+                                        line.Insert(index + tick, "\"");
+                                        tick++;
+                                    }
+                                    row[j] = "\"" + line.ToString() + "\"";
                                 }
-                                row[j] = "\"" + line.ToString() + "\"";
+                                tmp += row[j] + "\t";
                             }
-                            tmp += row[j] + "\t";
+                            text[i] = tmp;
                         }
-                        text[i] = tmp;
+                        Utils.WriteToConfig(file);
+                        File.WriteAllLines(filepath, text);
                     }
-                    Utils.WriteToConfig(file);
-                    File.WriteAllLines(filepath, text);
                 }
                 catch (Exception e)
                 {
@@ -116,19 +102,26 @@ namespace GraphMed_Beta.FileHandling
                     "Make sure that the file is a \".txt\"-file delimited by tabs.");
             }
         }
+
         /// <summary>
         /// Splits up the .CSV-file into smaller ones, divided by the specified identifier. 
         /// </summary>
         /// <param name="configKey"></param>
         /// <param name="identifier"></param>
-        public static void SplitCSV(string configKey, string identifier, string type)
+        public static void SplitCSV(string configKey, string identifier)
         {
-            var filepath = path + ConfigurationManager.AppSettings[configKey];
+            var filepath = configKey;
+
+            if (configKey.Equals("Refset"))
+                filepath = CurrentConfig.Instance.FullRefset;
+            else if (configKey.Equals("Relationship"))
+                filepath = CurrentConfig.Instance.FullRelationship;
+
             if (File.Exists(filepath))
             {
-                if (identifier == null || type == null)
+                if (identifier == null)
                 {
-                    Console.WriteLine("Either the identifier or type is null. Please make sure that both fields are valid strings.");
+                    Console.WriteLine("The identifier seems to be null. Please make sure that the field is a valid strings.");
                 }
 
                 // Dictionary that holds the text as Value and the identifier as the key
@@ -167,7 +160,7 @@ namespace GraphMed_Beta.FileHandling
                         if (getCypher.Connection.IsConnected)
                         {
                             string fileName = getCypher.Term(dict.ElementAt(i).Key).Replace("-", "").Replace(" ", "_").ToUpper();
-                            File.WriteAllLines(path + "\\Neo4j\\default.graphdb\\import\\parsed" + type + "-" + fileName + ".txt", content);
+                            File.WriteAllLines(CurrentConfig.Instance.TargetPath + "\\import\\parsed" + configKey + "-" + fileName + ".txt", content);
                         }
                         else
                         {
@@ -193,8 +186,57 @@ namespace GraphMed_Beta.FileHandling
         /// <returns></returns>
         public static string[] GetFiles(string searchPattern)
         {
-            string[] filePaths = Directory.GetFiles(path + "\\Neo4j\\default.graphdb\\import", "*" + searchPattern + "*");
+            string[] filePaths = Directory.GetFiles(CurrentConfig.Instance.TargetPath + "\\import", "*" + searchPattern + "*");
             return filePaths;
+        }
+
+        /// <summary>
+        /// Moves all necessary files from the :D drive to installation folder. 
+        /// </summary>
+        public static void MoveFiles()
+        {
+            List<string> pathList = new List<string>();
+            string fileName = "";
+            string destFile = "";
+
+            pathList.Add(CurrentConfig.Instance.Descriptions);
+            pathList.Add(CurrentConfig.Instance.Concepts);
+            pathList.Add(CurrentConfig.Instance.Relationships);
+            pathList.Add(CurrentConfig.Instance.Refset);
+
+            string targetPath = CurrentConfig.Instance.TargetPath + "\\import";
+
+            if (!Directory.Exists(targetPath))
+            {
+                Directory.CreateDirectory(targetPath);
+            }
+            for (int i = 0; i < pathList.Count; i++)
+            {
+                //If one file path is wrong, delete all previous files.
+                if (!File.Exists(pathList.ElementAt(i)))
+                {
+                    Console.WriteLine("The path: " + pathList.ElementAt(i) + " is not correct");
+                    for (int j = 0; j < i; i++)
+                        File.Delete(Path.Combine(targetPath, (Path.GetFileName(pathList.ElementAt(j)))));
+
+                    break;
+                }
+                else
+                {
+                    fileName = Path.GetFileName(pathList.ElementAt(i));
+                    CurrentConfig.Instance.destPath[i] = destFile = Path.Combine(targetPath, fileName);
+                    File.Copy(pathList.ElementAt(i), destFile, true);
+                }
+            }
+            SetFullPath(CurrentConfig.Instance.destPath);
+            Console.WriteLine("Succesfully moved files!");
+        }
+        public static void SetFullPath(string[] paths)
+        {
+            CurrentConfig.Instance.FullDescription = @paths[0];
+            CurrentConfig.Instance.FullConcept = @paths[1];
+            CurrentConfig.Instance.FullRelationship = @paths[2];
+            CurrentConfig.Instance.FullRefset = @paths[3];
         }
     }
 }
