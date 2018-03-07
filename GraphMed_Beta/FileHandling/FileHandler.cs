@@ -50,9 +50,8 @@ namespace GraphMed_Beta.FileHandling
         /// Validates the targeted .txt-file; correcting the use of quotation marks so it can be loaded into Neo4j. 
         /// </summary>
         /// <param name="filepath"></param>
-        public static void ValidateCSV(string file)
+        public static void ValidateCSV(string filepath)
         {
-            var filepath = path + ConfigurationManager.AppSettings[file];
             if (File.Exists(filepath))
             {
                 try
@@ -69,26 +68,20 @@ namespace GraphMed_Beta.FileHandling
                             var val = row[j];
                             if (val.Contains("\""))
                             {
-                                //if the next character after the first quotation mark is also a quotation mark,
-                                //we can assume that the file is already validated so break
-                                if (!val[val.IndexOf("\"") + 2].Equals("\""))
+                                var line = new StringBuilder(val);
+                                var tick = 0;
+                                foreach (var index in Utils.FindAllIndexesOf(val, "\""))
                                 {
-                                    var line = new StringBuilder(val);
-                                    var tick = 0;
-                                    foreach (var index in Utils.FindAllIndexesOf(val, "\""))
-                                    {
-                                        line.Insert(index + tick, "\"");
-                                        tick++;
-                                    }
-                                    row[j] = "\"" + line.ToString() + "\"";
+                                    line.Insert(index + tick, "\"");
+                                    tick++;
                                 }
-                                tmp += row[j] + "\t";
+                                row[j] = "\"" + line.ToString() + "\""; 
                             }
+                            tmp += row[j] + "\t";
                             text[i] = tmp;
                         }
-                        Utils.WriteToConfig(file);
-                        File.WriteAllLines(filepath, text);
                     }
+                    File.WriteAllLines(filepath, text);
                 }
                 catch (Exception e)
                 {
@@ -218,7 +211,6 @@ namespace GraphMed_Beta.FileHandling
                     Console.WriteLine("The path: " + pathList.ElementAt(i) + " is not correct");
                     for (int j = 0; j < i; i++)
                         File.Delete(Path.Combine(targetPath, (Path.GetFileName(pathList.ElementAt(j)))));
-
                     break;
                 }
                 else

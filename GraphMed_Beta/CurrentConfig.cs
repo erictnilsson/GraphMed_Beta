@@ -40,10 +40,10 @@ namespace GraphMed_Beta
             set
             {
                 snomedImportPath = value;
-                Descriptions = String.Concat(value, @"\SnomedCT_InternationalRF2_PRODUCTION_20170731T150000Z\Snapshot\Terminology\sct2_Description_Snapshot-en_INT_", SnomedVersion, ".txt");
-                Concepts = String.Concat(value, @"\SnomedCT_InternationalRF2_PRODUCTION_20170731T150000Z\Snapshot\Terminology\sct2_Concept_Snapshot_INT_", SnomedVersion, ".txt");
-                Relationships = String.Concat(value, @"\SnomedCT_InternationalRF2_PRODUCTION_20170731T150000Z\Snapshot\Terminology\sct2_Relationship_Snapshot_INT_", SnomedVersion, ".txt");
-                Refset = String.Concat(value, @"\SnomedCT_InternationalRF2_PRODUCTION_20170731T150000Z\Snapshot\\Refset\Language\der2_cRefset_LanguageSnapshot-en_INT_", SnomedVersion, ".txt");
+                Descriptions = String.Concat(value, @"\SnomedCT_InternationalRF2_PRODUCTION_",SnomedVersion,@"T150000Z\Snapshot\Terminology\sct2_Description_Snapshot-en_INT_", SnomedVersion, ".txt");
+                Concepts = String.Concat(value, @"\SnomedCT_InternationalRF2_PRODUCTION_", SnomedVersion, @"T150000Z\Snapshot\Terminology\sct2_Concept_Snapshot_INT_", SnomedVersion, ".txt");
+                Relationships = String.Concat(value, @"\SnomedCT_InternationalRF2_PRODUCTION_", SnomedVersion, @"T150000Z\Snapshot\Terminology\sct2_Relationship_Snapshot_INT_", SnomedVersion, ".txt");
+                Refset = String.Concat(value, @"\SnomedCT_InternationalRF2_PRODUCTION_", SnomedVersion, @"T150000Z\Snapshot\\Refset\Language\der2_cRefset_LanguageSnapshot-en_INT_", SnomedVersion, ".txt");
             }
         }
         public string Descriptions { get; set; }

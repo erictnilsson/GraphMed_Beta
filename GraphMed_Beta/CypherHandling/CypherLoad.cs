@@ -45,7 +45,7 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="index"></param>
         public void Concepts(bool constrain = true)
         {
-            var uri = ConfigurationManager.AppSettings["concepts"];
+            var uri = CurrentConfig.Instance.FullConcept;
             LoadNodes<Concept>(uri);
 
             if (constrain)
@@ -62,7 +62,7 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="constrain"></param>
         public void Descriptions(bool forceRelationship = true, bool index = true, bool constrain = true)
         {
-            var uri = ConfigurationManager.AppSettings["descriptions"];
+            var uri = CurrentConfig.Instance.FullDescription;
             if (Connection.IsConnected)
             {
                 if (forceRelationship)

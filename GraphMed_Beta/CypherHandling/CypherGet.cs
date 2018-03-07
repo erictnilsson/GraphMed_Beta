@@ -77,8 +77,8 @@ namespace GraphMed_Beta.CypherHandling
         private Result Get(string searchTerm, string point, string lang, string rel)
         {
             Result returnResult = new Result();
-
-            if (int.TryParse(searchTerm, out int n))
+            int n = 0; 
+            if (int.TryParse(searchTerm, out n))
             {
                 var cypher = Connection.Cypher
                             .Match("(t:Term)<-[:" + rel + "{RefsetId: '" + lang + "'}]-(d:Description)-[:REFERS_TO]->(c:Concept{Id: '" + searchTerm + "'})" + point + "(cc:Concept)<-[:REFERS_TO]-(dd:Description)-[:" + rel + "{RefsetId:'" + lang + "'}]->(tt:Term)")

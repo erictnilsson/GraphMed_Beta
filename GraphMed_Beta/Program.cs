@@ -15,88 +15,139 @@ namespace GraphMed_Beta
 
             while (running)
             {
-                args = Console.ReadLine().Split(' ');
-                string cmd = args[0].Substring(0, 3).ToUpper();
-                switch (cmd)
+                var input = Console.ReadLine();
+                var cmd = input.Split('=')[0];
+                try
                 {
-                    case "-S=":
-                        var search = Cypher.Get().Nodes(searchTerm: args[1], relatives: args[2], limit: args[3], acceptability: args[4], langCode: args[5]);
-                        Console.WriteLine("Id: " + search.Id);
-                        Console.WriteLine("Term: " + search.Term);
-                        foreach (var s in search.Results)
-                        {
-                            Console.WriteLine("ConceptId: " + s.ConceptId);
-                            Console.WriteLine("Term: " + s.Term);
-                        }
+                    args = input.Split('=')[1].Split('-');
 
-                        break;
-                    case "-L=":
-                        string user = args[0].Remove(0, 3);
-                        CurrentConfig.Instance.GraphDBUser = user;
-                        CurrentConfig.Instance.GraphDBPassword = args[1];
-                        CurrentConfig.Instance.GraphDBUri = args[2];
+                    switch (cmd)
+                    {
+                        case "-Search":
+                            Search(searchword: args[0], relatives: args[1], limit: args[2], acceptability: args[3], langCode: args[4]);
+                            break;
 
-                        Console.WriteLine("L!");
-                        break;
-                    case "-I=":
-                        string path = args[0].Remove(0, 3);
-                        CurrentConfig.Instance.SnomedVersion = @args[2];
-                        CurrentConfig.Instance.SnomedImportPath = @path;
-                        CurrentConfig.Instance.TargetPath = @args[1];
-                        FileHandler.MoveFiles();
+                        case "-Login":
+                            Login(user: args[0], pass: args[1], uri: args[2]);
+                            break;
 
-                        Install();
-                        Console.WriteLine("I!");
-                        break;
-                    case "-Q=":
-                        running = false;
-                        break;
+                        case "-Install":
+                            MoveFiles(import: @args[0], target: @args[1], version: @args[2]);
+                            Install();
+                            Console.WriteLine("Successfully loaded your Neo4j database.");
+                            break;
+                        case "-DeleteAll":
+                            DeleteAll();
+                            break;
+                        case "-Help":
+                            Help();
+                            break;
+                        case "-Exit":
+                            Exit();
+                            break;
+                        default:
+                            Help();
+                            break;
+
+                    }
+                    args = new string[0];
                 }
-                args = new string[0];
+                catch(Exception e)
+                {
+                    Console.WriteLine("Invalid command. Reason: " + e.Message);
+                    Help();
+                }
             }
         }
 
-        private static void Init()
+        private static void Search(string searchword, string relatives, string limit, string acceptability, string langCode)
         {
-            //var a = Cypher.Get().Nodes("Duckbill flathead", 'f', 1, "pref", "GB");
-            //Console.WriteLine(a.Id + ", " + a.Term + ", " + a.Results);
+            var search = Cypher.Get().Nodes(searchTerm: searchword.Trim(), relatives: relatives.Trim(), limit: limit.Trim(), acceptability: acceptability.Trim(), langCode: langCode.Trim());
+            Console.WriteLine("----BASE----");
+            Console.WriteLine("Id: " + search.Id);
+            Console.WriteLine("Term: " + search.Term);
+            Console.WriteLine("----------------------" + "\n");
+            foreach (var s in search.Results)
+            {
+                Console.WriteLine("ConceptId: " + s.ConceptId);
+                Console.WriteLine("Term: " + s.Term);
+            }
+            Console.Write("\n");
+        }
+
+        private static void Exit()
+        {
+
+        }
+
+        private static void MoveFiles(string import, string target, string version)
+        {
+            CurrentConfig.Instance.SnomedVersion = version;
+            CurrentConfig.Instance.SnomedImportPath = import;
+            CurrentConfig.Instance.TargetPath = target;
+
+            FileHandler.MoveFiles();
+        }
+
+        private static void Login(string user, string pass, string uri)
+        {
+            CurrentConfig.Instance.GraphDBUser = user.Trim();
+            CurrentConfig.Instance.GraphDBPassword = pass.Trim();
+            CurrentConfig.Instance.GraphDBUri = uri.Trim();
+
+            Console.WriteLine("Logged in as \"" + CurrentConfig.Instance.GraphDBUser + "\" on \"" + CurrentConfig.Instance.GraphDBUri + "\".");
+        }
+        private static void DeleteAll()
+        {
+
+        }
+
+        private static void Help()
+        {
+            Console.WriteLine("Please take a few minutes to read the README file.");
+            Console.WriteLine("-Login= [Username]-[Password]-[Database Uri]");
+            Console.WriteLine("-Install= [Snomed folder]-[Your database folder]-[Snomed version]");
+            Console.WriteLine("-Search= [Term]-[Relatives]-[Limit]-[Acceptability]-[Language]");
+            Console.WriteLine("DeleteAll= 'Deletes entire database'");
+            Console.WriteLine("-Help=");
+            Console.WriteLine("-Exit= 'Exit the application'");
         }
 
         private static void Install()
         {
             Console.WriteLine("Trying to validate all CSV-files...");
             FileHandler.ValidateCSVFiles();
-            Console.WriteLine("All files was successfully validatet 100%");
+            Console.WriteLine("All files successfully validated 100%");
             Thread.Sleep(1000);
 
             Console.WriteLine("Trying to load all concepts...");
             Cypher.Load().Concepts();
-            Console.WriteLine("All concepts was succesfully loaded 100%");
+            Console.WriteLine("All concepts succesfully loaded 100%");
             Thread.Sleep(3000);
 
             Console.WriteLine("Trying to load all descriptions...");
             Cypher.Load().Descriptions();
-            Console.WriteLine("All descriptions was successfully loaded 100%");
+            Console.WriteLine("All descriptions successfully loaded 100%");
             Thread.Sleep(1000);
 
             Console.WriteLine("Trying to parse the Relationship CSV-file...");
             FileHandler.SplitCSV("Relationship", "typeId");
-            Console.WriteLine("The Relationship CSV-file was successfully parsed 100%");
+            Console.WriteLine("The Relationship CSV-file successfully parsed 100%");
             Thread.Sleep(3000);
 
             Console.WriteLine("Trying to load all relationships...");
             Cypher.Load().Relationships();
-            Console.WriteLine("All relationships was successfully loaded 100%");
+            Console.WriteLine("All relationships successfully loaded 100%");
             Thread.Sleep(1000);
 
             Console.WriteLine("Trying to parse the Refset CSV-file...");
             FileHandler.SplitCSV("Refset", "acceptabilityId");
-            Console.WriteLine("The Refset CSV-file successfully was parsed 100%");
+            Console.WriteLine("The Refset CSV-file successfully parsed 100%");
             Thread.Sleep(3000);
 
             Console.WriteLine("Trying to load all refset relationships...");
             Cypher.Load().Refset();
-            Console.WriteLine("All refsets was successfully loaded 100%");
+            Console.WriteLine("All refsets successfully loaded 100%");
         }
     }
 }

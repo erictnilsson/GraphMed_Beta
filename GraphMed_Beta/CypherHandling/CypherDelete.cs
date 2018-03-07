@@ -100,8 +100,8 @@ namespace GraphMed_Beta.CypherHandling
             Console.WriteLine("There are " + count + " nodes in the database. The deleting process may take several minutes. Please hold...");
             while (Cypher.Delete().CountNodes() > 0)
             {
-                Cypher.Delete(100_000).DetachDelete();
-                if (count % 100_000 == 0)
+                Cypher.Delete(100000).DetachDelete();
+                if (count % 100000 == 0)
                     Console.WriteLine(Cypher.Delete().CountNodes() + " nodes left in the database");
             }
             Console.WriteLine("All " + count + " nodes deleted");

@@ -59,14 +59,5 @@ namespace GraphMed_Beta.Utilities
             }
             return indexes.ToArray();
         }
-
-        public static void WriteToConfig(string validatedFile)
-        {
-            var valids = File.ReadAllLines(Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Config.txt"));
-            var a = valids[1].Split(',').Length;
-            valids[1] += validatedFile + ", ";
-
-            File.WriteAllLines(Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "Config.txt"), valids);
-        }
     }
 }
