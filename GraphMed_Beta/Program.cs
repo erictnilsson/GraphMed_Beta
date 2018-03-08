@@ -32,7 +32,10 @@ namespace GraphMed_Beta
                         {
                             case "-search":
                                 if (IsConnected())
-                                    Search(searchword: args[0], relatives: args[1], limit: args[2], acceptability: args[3], langCode: args[4]);
+                                    if (args.Length == 5)
+                                        Search(searchword: args[0], relatives: args[1], limit: args[2], acceptability: args[3], langCode: args[4]);
+                                else
+                                        Console.WriteLine("Enter your search in this fashion: \"-Search= searchTerm-relatives-limit-acceptability-languageCode\"");
                                 break;
 
                             case "-login":

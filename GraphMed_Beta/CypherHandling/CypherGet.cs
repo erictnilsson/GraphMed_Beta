@@ -77,7 +77,7 @@ namespace GraphMed_Beta.CypherHandling
         private Result Get(string searchTerm, string point, string lang, string rel)
         {
             Result returnResult = new Result();
-            int n = 0; 
+            int n = 0;
             if (int.TryParse(searchTerm, out n))
             {
                 var cypher = Connection.Cypher
@@ -113,11 +113,14 @@ namespace GraphMed_Beta.CypherHandling
                                  tt.As<TermNode>().Term
                              })
                              .Results;
+                // breaks if no result
+                if (result.Count() > 0)
+                {
+                    returnResult = new Result(result.FirstOrDefault().AnchorId, result.FirstOrDefault().AnchorTerm);
 
-                returnResult = new Result(result.FirstOrDefault().AnchorId, result.FirstOrDefault().AnchorTerm);
-
-                foreach (var obj in result)
-                    returnResult.Results.Add(new Display(obj.Id, obj.Term));
+                    foreach (var obj in result)
+                        returnResult.Results.Add(new Display(obj.Id, obj.Term));
+                }
             }
             return returnResult;
         }
