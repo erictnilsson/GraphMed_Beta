@@ -175,7 +175,7 @@ namespace GraphMed_Beta
             Console.WriteLine("Trying to parse the Refset CSV-file...");
             FileHandler.SplitCSV("Refset", "acceptabilityId");
             Console.WriteLine("The Refset CSV-file successfully parsed 100%");
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
 
             Console.WriteLine("Trying to load all refset relationships...");
             Cypher.Load().Refset();
