@@ -94,7 +94,7 @@ namespace GraphMed_Beta.CypherHandling
                             });
 
                 var result = ExecuteWithResults(cypher);
-                returnResult = new Result(result.FirstOrDefault().Id, result.FirstOrDefault().Term);
+                returnResult = new Result(result.FirstOrDefault().AnchorId, result.FirstOrDefault().AnchorTerm);
 
                 foreach (var obj in result)
                     returnResult.Results.Add(new Display(obj.Id, obj.Term));
@@ -102,10 +102,10 @@ namespace GraphMed_Beta.CypherHandling
             else
             {
                 var result = Connection.Cypher
-                             .Match("(t:Term{Term:'" + searchTerm + "'})<-[{RefsetId:'" + lang + "'}]-(d:Description)-[:REFERS_TO]->(c:Concept)" + point + "(cc:Concept)<-[REFERS_TO]-(dd:Description)-[:" + rel + "{RefsetId:'" + lang + "'}]->(tt:Term)")
+                             .Match("(t:Term{Term:'" + searchTerm + "'})<-[{RefsetId:'" + lang + "'}]-(d:Description)-[:REFERS_TO]->(c:Concept)" + point + "(cc:Concept)<-[:REFERS_TO]-(dd:Description)-[:" + rel + "{RefsetId:'" + lang + "'}]->(tt:Term)")
                              .Where("d.Active = '1'")
                              .AndWhere("dd.Active = '1'")
-                             .Return((t, c, tt, cc) => new
+                             .Return((t, c, cc, tt) => new
                              {
                                  AnchorId = c.As<Concept>().Id,
                                  AnchorTerm = t.As<TermNode>().Term,
@@ -114,7 +114,7 @@ namespace GraphMed_Beta.CypherHandling
                              })
                              .Results;
 
-                returnResult = new Result(result.FirstOrDefault().Id, result.FirstOrDefault().Term);
+                returnResult = new Result(result.FirstOrDefault().AnchorId, result.FirstOrDefault().AnchorTerm);
 
                 foreach (var obj in result)
                     returnResult.Results.Add(new Display(obj.Id, obj.Term));

@@ -90,8 +90,8 @@ namespace GraphMed_Beta
         private static void Search(string searchword, string relatives, string limit, string acceptability, string langCode)
         {
             var search = Cypher.Get().Nodes(searchTerm: searchword.Trim(), relatives: relatives.Trim(), limit: limit.Trim(), acceptability: acceptability.Trim(), langCode: langCode.Trim());
-            Console.WriteLine("----BASE----");
-            Console.WriteLine("Id: " + search.Id);
+            Console.WriteLine("\n----BASE----");
+            Console.WriteLine("ConceptId: " + search.Id);
             Console.WriteLine("Term: " + search.Term);
             Console.WriteLine("----------------------" + "\n");
             foreach (var s in search.Results)
