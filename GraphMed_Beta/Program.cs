@@ -43,6 +43,8 @@ namespace GraphMed_Beta
                                     Login(user: args[0], pass: args[1], uri: args[2]);
                                 else
                                     Console.WriteLine("Enter your username, password, and the uri you want to connect to in this fashion: \"-Login= username-password-uri\"");
+                                Uri uri = new Uri(new Uri("file://"), "import/sct2_Description_Snapshot-en_INT_20170731.txt"); 
+                                Console.WriteLine(uri); 
                                 break;
 
                             case "-install":

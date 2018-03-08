@@ -23,7 +23,7 @@ namespace GraphMed_Beta.CypherHandling
         public void Refset(bool index = true)
         {
             foreach (var uri in FileHandler.GetFiles("parsedRefset-"))
-                LoadRefset("file:///" + uri.Substring(uri.LastIndexOf("\\") + 1));
+                LoadRefset(uri.Substring(uri.LastIndexOf("\\") + 1));
 
             if (index)
                 Cypher.Create().Index("Term", "Term");
@@ -35,7 +35,7 @@ namespace GraphMed_Beta.CypherHandling
         public void Relationships()
         {
             foreach (var uri in FileHandler.GetFiles("parsedRelationship-"))
-                LoadRelationships("file:///" + uri.Substring(uri.LastIndexOf("\\") + 1));
+                LoadRelationships(uri.Substring(uri.LastIndexOf("\\") + 1));
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="index"></param>
         public void Concepts(bool constrain = true)
         {
-            var uri = "file:///" + CurrentConfig.Instance.FullConcept.Substring(CurrentConfig.Instance.FullConcept.LastIndexOf('\\')+1);
+            var uri = CurrentConfig.Instance.FullConcept.Substring(CurrentConfig.Instance.FullConcept.LastIndexOf('\\')+1);
             LoadNodes<Concept>(uri);
 
             if (constrain)
@@ -62,7 +62,7 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="constrain"></param>
         public void Descriptions(bool forceRelationship = true, bool index = true, bool constrain = true)
         {
-            var uri = "file:///" + CurrentConfig.Instance.FullDescription.Substring(CurrentConfig.Instance.FullDescription.LastIndexOf('\\') + 1);
+            var uri = CurrentConfig.Instance.FullDescription.Substring(CurrentConfig.Instance.FullDescription.LastIndexOf('\\') + 1);
             if (Connection.IsConnected)
             {
                 if (forceRelationship)
@@ -92,7 +92,7 @@ namespace GraphMed_Beta.CypherHandling
             {
                 var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
                 var cypher = Connection.Cypher
-                                  .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                                  .LoadCsv(fileUri: new Uri(new Uri("file://"), uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
                                   .With(Identifier)
                                   .Limit(Limit)
                                   .Match("(d:Description)")
@@ -116,7 +116,7 @@ namespace GraphMed_Beta.CypherHandling
             {
                 var relationship = uri.Substring(uri.IndexOf('-') + 1, uri.LastIndexOf('.') - uri.IndexOf('-') - 1).ToUpper();
                 var cypher = Connection.Cypher
-                                  .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                                  .LoadCsv(fileUri: new Uri(new Uri("file://"), uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
                                   .With(Identifier)
                                   .Limit(Limit)
                                   .Match("(c:Concept)", "(cc:Concept)")
@@ -141,7 +141,7 @@ namespace GraphMed_Beta.CypherHandling
             if (uri != null)
             {
                 var cypher = Connection.Cypher
-                           .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                           .LoadCsv(fileUri: new Uri(new Uri("file://"), uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
                            .With(Identifier)
                            .Limit(Limit)
                            .Match("(c:Concept)")
@@ -167,7 +167,7 @@ namespace GraphMed_Beta.CypherHandling
             {
                 var node = typeof(T);
                 var query = Connection.Cypher
-                                  .LoadCsv(fileUri: new Uri(uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
+                                  .LoadCsv(fileUri: new Uri(new Uri("file://"), uri), identifier: Identifier, withHeaders: true, fieldTerminator: "\t", periodicCommit: CommitSize)
                                   .With(Identifier)
                                   .Limit(Limit)
                                   .Create("(n: " + node.Name + " {" + Utils.GetBuildString<T>(Identifier) + "})");
