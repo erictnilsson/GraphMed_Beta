@@ -80,31 +80,24 @@ namespace GraphMed_Beta.CypherHandling
             ExecuteWithoutResults(cypher);
         }
 
-        /// <summary>
-        /// Used internally to count all of the nodes in the database. 
-        /// </summary>
-        /// <returns></returns>
-        private int CountNodes()
-        {
-            var cypher = Connection.Cypher
-                .Match("(n)")
-                .With("n")
-                .Return<int>("count(n)");
-
-            return ExecuteWithResults(cypher).First();
-        }
-
         public void Alles()
         {
-            var count = Cypher.Delete().CountNodes();
+            var count = Cypher.Get().CountNodes();
+            var orig = count; 
             Console.WriteLine("There are " + count + " nodes in the database. The deleting process may take several minutes. Please hold...");
-            while (Cypher.Delete().CountNodes() > 0)
+            /*
+            Cypher.Drop().Constraint<Concept>();
+            Cypher.Drop().Constraint<Description>();
+            Cypher.Drop().Index<Concept>();
+            Cypher.Drop().Index<Description>();
+            Cypher.Drop().Index<TermNode>();
+            */
+            while (count > 0)
             {
                 Cypher.Delete(100000).DetachDelete();
-                if (count % 100000 == 0)
-                    Console.WriteLine(Cypher.Delete().CountNodes() + " nodes left in the database");
+                Console.WriteLine(count + " nodes left");
             }
-            Console.WriteLine("All " + count + " nodes deleted");
+            Console.WriteLine("All " + orig + " nodes deleted");
         }
     }
 }

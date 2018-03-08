@@ -45,7 +45,7 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="index"></param>
         public void Concepts(bool constrain = true)
         {
-            var uri = CurrentConfig.Instance.FullConcept;
+            var uri = "file:///" + CurrentConfig.Instance.FullConcept.Substring(CurrentConfig.Instance.FullConcept.LastIndexOf('\\')+1);
             LoadNodes<Concept>(uri);
 
             if (constrain)
@@ -62,7 +62,7 @@ namespace GraphMed_Beta.CypherHandling
         /// <param name="constrain"></param>
         public void Descriptions(bool forceRelationship = true, bool index = true, bool constrain = true)
         {
-            var uri = CurrentConfig.Instance.FullDescription;
+            var uri = "file:///" + CurrentConfig.Instance.FullDescription.Substring(CurrentConfig.Instance.FullDescription.LastIndexOf('\\') + 1);
             if (Connection.IsConnected)
             {
                 if (forceRelationship)

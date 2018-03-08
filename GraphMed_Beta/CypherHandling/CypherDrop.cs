@@ -43,6 +43,12 @@ namespace GraphMed_Beta.CypherHandling
             {
                 identifier = "ConceptId";
             }
+            else if (node.Name.Equals("TermNode"))
+            {
+                identifier = "Term";
+                DropTermIndex(identifier);
+                return;
+            }
             DropIndex<Node>(identifier);
         }
 
@@ -78,6 +84,12 @@ namespace GraphMed_Beta.CypherHandling
         {
             var node = typeof(Node);
             var cypher = Connection.Cypher.Drop("INDEX ON :" + node.Name + " (" + identifier + ")");
+
+            ExecuteWithoutResults(cypher);
+        }
+        private void DropTermIndex(string identifier)
+        {
+            var cypher = Connection.Cypher.Drop("INDEX ON :" + identifier + " (" + identifier + ")");
 
             ExecuteWithoutResults(cypher);
         }

@@ -41,13 +41,13 @@ namespace GraphMed_Beta.CypherHandling
             switch (relatives)
             {
                 case "p":
-                    point = "-[r*.." + lim + "]->";
+                    point = "-[*.." + lim + "]->";
                     break;
                 case "c":
-                    point = "<-[r*.." + lim + "]-";
+                    point = "<-[*.." + lim + "]-";
                     break;
                 case "f":
-                    point = "-[r*.." + lim + "]-";
+                    point = "-[*.." + lim + "]-";
                     break;
             }
 
@@ -120,6 +120,21 @@ namespace GraphMed_Beta.CypherHandling
                     returnResult.Results.Add(new Display(obj.Id, obj.Term));
             }
             return returnResult;
+        }
+
+
+        /// <summary>
+        /// Used internally to count all of the nodes in the database. 
+        /// </summary>
+        /// <returns></returns>
+        public int CountNodes()
+        {
+            var cypher = Connection.Cypher
+                .Match("(n)")
+                .With("n")
+                .Return<int>("count(n)");
+
+            return ExecuteWithResults(cypher).First();
         }
     }
 }

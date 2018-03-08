@@ -25,9 +25,9 @@ namespace GraphMed_Beta.ConnectionHandling
         /// </summary>
         public Connection()
         {
-            User = ConfigurationManager.AppSettings["GraphDBUser"];
-            Pass = ConfigurationManager.AppSettings["GraphDBPassword"];
-            Uri = ConfigurationManager.AppSettings["ClientUri"];
+            User = CurrentConfig.Instance.GraphDBUser;
+            Pass = CurrentConfig.Instance.GraphDBPassword;
+            Uri = CurrentConfig.Instance.GraphDBUri;
 
             HttpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(1D) };
         }
@@ -51,11 +51,14 @@ namespace GraphMed_Beta.ConnectionHandling
         /// <returns></returns>
         public GraphClient Connect()
         {
-            //Handle null
-            var client = new GraphClient(new Uri(Uri), new HttpClientWrapper(User, Pass, HttpClient));
+            GraphClient client = null;
             try
             {
-                client.Connect();
+                if (Uri != null && User != null && Pass != null && HttpClient != null)
+                {
+                    client = new GraphClient(new Uri(Uri), new HttpClientWrapper(User, Pass, HttpClient));
+                    client.Connect();
+                }
             }
             catch (HttpRequestException)
             {

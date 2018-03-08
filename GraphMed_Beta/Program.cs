@@ -1,9 +1,11 @@
 ﻿using GraphMed_Beta.CypherHandling;
 using GraphMed_Beta.FileHandling;
+using GraphMed_Beta.Model.Nodes;
 using Neo4jClient;
 using System;
 using System.Diagnostics;
 using System.Threading;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GraphMed_Beta
 {
@@ -12,51 +14,76 @@ namespace GraphMed_Beta
         static void Main(string[] args)
         {
             bool running = true;
-
+            Console.WriteLine("GraphMed");
             while (running)
             {
                 var input = Console.ReadLine();
-                var cmd = input.Split('=')[0];
-                try
+                var command = input.Split('=');
+                if (command.Length != 2)
+                    Console.WriteLine("Wrong input. Please specify the command and the parameters in this fashion: \"-Command= param1-param2-param3\" \n" +
+                        "See \"-Help=\" for more info.");
+                else
                 {
-                    args = input.Split('=')[1].Split('-');
-
-                    switch (cmd)
+                    var cmd = command[0].ToLower();
+                    args = command[1].Split('-');
+                    try
                     {
-                        case "-Search":
-                            Search(searchword: args[0], relatives: args[1], limit: args[2], acceptability: args[3], langCode: args[4]);
-                            break;
+                        switch (cmd)
+                        {
+                            case "-search":
+                                if (IsConnected())
+                                    Search(searchword: args[0], relatives: args[1], limit: args[2], acceptability: args[3], langCode: args[4]);
+                                break;
 
-                        case "-Login":
-                            Login(user: args[0], pass: args[1], uri: args[2]);
-                            break;
+                            case "-login":
+                                if (args.Length == 3)
+                                    Login(user: args[0], pass: args[1], uri: args[2]);
+                                else
+                                    Console.WriteLine("Enter your username, password, and the uri you want to connect to in this fashion: \"-Login= username-password-uri\"");
+                                break;
 
-                        case "-Install":
-                            MoveFiles(import: @args[0], target: @args[1], version: @args[2]);
-                            Install();
-                            Console.WriteLine("Successfully loaded your Neo4j database.");
-                            break;
-                        case "-DeleteAll":
-                            DeleteAll();
-                            break;
-                        case "-Help":
-                            Help();
-                            break;
-                        case "-Exit":
-                            Exit();
-                            break;
-                        default:
-                            Help();
-                            break;
+                            case "-install":
+                                MoveFiles(import: @args[0], target: @args[1], version: @args[2]);
+                                Install();
+                                Console.WriteLine("Successfully loaded your Neo4j database.");
+                                break;
+                            case "-delete":
+                                if (IsConnected())
+                                    DeleteAll();
+                                break;
+                            case "-help":
+                                Help();
+                                break;
+                            case "-exit":
+                                Exit();
+                                break;
+                            default:
+                                Help();
+                                break;
 
+                        }
+                        args = new string[0];
                     }
-                    args = new string[0];
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Invalid command. Reason: " + e.Message);
+                        Help();
+                    }
                 }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Invalid command. Reason: " + e.Message);
-                    Help();
-                }
+
+            }
+        }
+
+        private static bool IsConnected()
+        {
+            if (Cypher.Get().Connection != null)
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Please login to the Neo4j database using \"-Login= username-password-uri\". ");
+                return false;
             }
         }
 
@@ -77,7 +104,7 @@ namespace GraphMed_Beta
 
         private static void Exit()
         {
-
+            // Environment.Exit(1);
         }
 
         private static void MoveFiles(string import, string target, string version)
@@ -94,12 +121,14 @@ namespace GraphMed_Beta
             CurrentConfig.Instance.GraphDBUser = user.Trim();
             CurrentConfig.Instance.GraphDBPassword = pass.Trim();
             CurrentConfig.Instance.GraphDBUri = uri.Trim();
-
-            Console.WriteLine("Logged in as \"" + CurrentConfig.Instance.GraphDBUser + "\" on \"" + CurrentConfig.Instance.GraphDBUri + "\".");
+            if (Cypher.Get().Connection.IsConnected)
+                Console.WriteLine("Logged in as \"" + CurrentConfig.Instance.GraphDBUser + "\" on \"" + CurrentConfig.Instance.GraphDBUri + "\".");
+            else
+                Console.WriteLine("Failed to login as \"" + CurrentConfig.Instance.GraphDBUser + "\" on \"" + CurrentConfig.Instance.GraphDBUri + "\".");
         }
         private static void DeleteAll()
         {
-
+            Cypher.Delete().Alles();
         }
 
         private static void Help()
