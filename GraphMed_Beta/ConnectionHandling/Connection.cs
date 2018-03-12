@@ -66,7 +66,6 @@ namespace GraphMed_Beta.ConnectionHandling
             }
             catch (Exception e)
             {
-                Console.WriteLine("There seems to be an error with the connection: " + e.Message);
                 Dispose();
             }
 

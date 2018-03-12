@@ -13,7 +13,7 @@ namespace GraphMed_Beta
         /// </summary>
         private CurrentConfig()
         {
-            destPath = new string[4];
+            DestPath = new string[4];
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace GraphMed_Beta
         public string GraphDBUri { get; set; }
         public string SnomedVersion { get; set; }
 
-        public string[] destPath { get; set; }
+        public string[] DestPath { get; set; }
 
         public string snomedImportPath;
         public string SnomedImportPath

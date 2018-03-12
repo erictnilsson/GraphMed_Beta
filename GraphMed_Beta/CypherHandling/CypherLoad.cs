@@ -35,7 +35,11 @@ namespace GraphMed_Beta.CypherHandling
         public void Relationships()
         {
             foreach (var uri in FileHandler.GetFiles("parsedRelationship-"))
+            {
                 LoadRelationships(uri.Substring(uri.LastIndexOf("\\") + 1));
+                Console.WriteLine(uri.Substring(uri.LastIndexOf("\\") + 1) + " loaded successfully"); 
+            }
+                
         }
 
         /// <summary>
@@ -151,8 +155,8 @@ namespace GraphMed_Beta.CypherHandling
                 ExecuteWithoutResults(cypher);
             }
             else
-                Console.WriteLine("The URI seems to not exist... " +
-                   "Make sure it does.");
+                throw new Exception("The URI seems to not exist... " +
+                    "Make sure it does.");
 
         }
 
@@ -175,7 +179,7 @@ namespace GraphMed_Beta.CypherHandling
                 ExecuteWithoutResults(query);
             }
             else
-                Console.WriteLine("The URI seems to not exist... " +
+                throw new Exception("The URI seems to not exist... " +
                     "Make sure it does.");
 
         }

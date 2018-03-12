@@ -75,7 +75,7 @@ namespace GraphMed_Beta.FileHandling
                                     line.Insert(index + tick, "\"");
                                     tick++;
                                 }
-                                row[j] = "\"" + line.ToString() + "\""; 
+                                row[j] = "\"" + line.ToString() + "\"";
                             }
                             tmp += row[j] + "\t";
                             text[i] = tmp;
@@ -85,12 +85,12 @@ namespace GraphMed_Beta.FileHandling
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Validation failed: \n" + e.Message);
+                    throw new Exception("Validation failed: \n" + e.Message);
                 }
             }
             else
             {
-                Console.WriteLine("Validation failed. \n" +
+                throw new Exception("Validation failed. \n" +
                     "The filepath \"" + filepath + "\" does not seem to be valid or exist.\n" +
                     "Make sure that the file is a \".txt\"-file delimited by tabs.");
             }
@@ -114,7 +114,7 @@ namespace GraphMed_Beta.FileHandling
             {
                 if (identifier == null)
                 {
-                    Console.WriteLine("The identifier seems to be null. Please make sure that the field is a valid strings.");
+                    throw new Exception("The identifier seems to be null. Please make sure that the field is a valid strings.");
                 }
 
                 // Dictionary that holds the text as Value and the identifier as the key
@@ -130,9 +130,10 @@ namespace GraphMed_Beta.FileHandling
                         index = Array.IndexOf(row, identifier);
                     if (index == -1)
                     {
-                        Console.WriteLine("The identifier \"" + identifier + "\" does not seem to exist withing the given context and therefore the file could not be parsed. \n" +
-                            "Please make sure that the identifier is a valid column header in the .txt-file \"" + filepath + "\".");
                         break;
+                        throw new Exception("The identifier \"" + identifier + "\" does not seem to exist withing the given context and therefore the file could not be parsed. \n" +
+                            "Please make sure that the identifier is a valid column header in the .txt-file \"" + filepath + "\".");
+
                     }
                     else
                     {
@@ -157,8 +158,8 @@ namespace GraphMed_Beta.FileHandling
                         }
                         else
                         {
-                            Console.WriteLine("Make sure that Neo4j is connected and running before splitting any \".txt\"-files.");
                             break;
+                            throw new Exception("Make sure that Neo4j is connected and running before splitting any \".txt\"-files.");
                         }
 
                     }
@@ -166,9 +167,9 @@ namespace GraphMed_Beta.FileHandling
             }
             else
             {
-                Console.WriteLine("Validation failed. \n" +
-                   "The filepath \"" + filepath + "\" does not seem to be valid or exist.\n" +
-                   "Make sure that the file is a \".txt\"-file delimited by tabs.");
+                throw new Exception("Validation failed. \n" +
+                    "The filepath \"" + filepath + "\" does not seem to be valid or exist.\n" +
+                    "Make sure that the file is a \".txt\"-file delimited by tabs.");
             }
         }
 
@@ -208,21 +209,23 @@ namespace GraphMed_Beta.FileHandling
                 //If one file path is wrong, delete all previous files.
                 if (!File.Exists(pathList.ElementAt(i)))
                 {
-                    Console.WriteLine("The path: " + pathList.ElementAt(i) + " is not correct");
+
                     for (int j = 0; j < i; i++)
                         File.Delete(Path.Combine(targetPath, (Path.GetFileName(pathList.ElementAt(j)))));
                     break;
+                    throw new Exception("The path: " + pathList.ElementAt(i) + " is not correct");
                 }
                 else
                 {
                     fileName = Path.GetFileName(pathList.ElementAt(i));
-                    CurrentConfig.Instance.destPath[i] = destFile = Path.Combine(targetPath, fileName);
+                    CurrentConfig.Instance.DestPath[i] = destFile = Path.Combine(targetPath, fileName);
                     File.Copy(pathList.ElementAt(i), destFile, true);
+                    File.SetAttributes(destFile, FileAttributes.Normal);
                 }
             }
-            SetFullPath(CurrentConfig.Instance.destPath);
-            Console.WriteLine("Succesfully moved files!");
+            SetFullPath(CurrentConfig.Instance.DestPath);
         }
+
         public static void SetFullPath(string[] paths)
         {
             CurrentConfig.Instance.FullDescription = @paths[0];

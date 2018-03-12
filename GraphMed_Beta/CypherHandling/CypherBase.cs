@@ -39,7 +39,7 @@ namespace GraphMed_Beta.CypherHandling
             }
             catch (NeoException e)
             {
-                Console.WriteLine("There was an error when executing the cypher: \n" +
+               throw new Exception("There was an error when executing the cypher: \n" +
                     "\"" + e.Message + "\"");
             }
             finally
@@ -53,9 +53,10 @@ namespace GraphMed_Beta.CypherHandling
             try
             {
                 return cypher.Results; 
-            } catch (NeoException)
+            } catch (NeoException e)
             {
-                throw; 
+                throw new Exception("There was an error when executing the cypher: \n" +
+                   "\"" + e.Message + "\"");
             } finally
             {
                 Connection.Dispose(); 
