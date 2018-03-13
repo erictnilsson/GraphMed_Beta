@@ -48,11 +48,7 @@ namespace GraphMed_Beta
 
                         case "-login":
                             if (args.Length == 3)
-                                //if (CurrentConfig.Instance.GraphDBUser != null || CurrentConfig.Instance.GraphDBPassword != null || CurrentConfig.Instance.GraphDBUri != null)
                                 Login(user: args[0], pass: args[1], uri: args[2]);
-                            //else
-                            //Console.WriteLine("You are already logged in as \"" + CurrentConfig.Instance.GraphDBUser + "\" on \"" + CurrentConfig.Instance.GraphDBUri + "\". \n" +
-                            //"Please logout using \"-logout\" before attempting a new login.");
                             else
                                 Console.WriteLine("Enter your username, password, and the uri you want to connect to like: \"-Login username-password-uri\" \n" +
                                     "See -help for more information. \n");
@@ -75,8 +71,6 @@ namespace GraphMed_Beta
                             break;
                         case "-help":
                             Help();
-                            break;
-                        case "-uninstall":
                             break;
                         case "-exit":
                             Exit();
@@ -177,7 +171,7 @@ namespace GraphMed_Beta
             Console.WriteLine("-Login [Username]-[Password]-[Database Uri]");
             Console.WriteLine("-Install [Snomed folder]-[Your database folder]-[Snomed version]");
             Console.WriteLine("-Search [Term]-[Relatives]-[Limit]-[Acceptability]-[Language]");
-            Console.WriteLine("DeleteAll 'Deletes entire database'");
+            Console.WriteLine("Delete 'Deletes entire database'");
             Console.WriteLine("-Help");
             Console.WriteLine("-Exit 'Exit the application'");
         }
