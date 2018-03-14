@@ -19,31 +19,24 @@ namespace GraphMed_Beta.CypherHandling
         public CypherDelete(int? limit) : base(limit) { }
 
         /// <summary>
-        /// Detaches and deletes all nodes independent on the Node type. 
+        /// Deletes all nodes independent of the Node type
         /// </summary>
-        public void DetachDelete()
+        public void All(bool detach)
         {
             var cypher = Connection.Cypher
+                     .Match("(n)")
+                     .With("n")
+                     .Limit(Limit)
+                     .Delete("(n)");
+
+            if (detach)
+            {
+                cypher = Connection.Cypher
                             .Match("(n)")
                             .With("n")
                             .Limit(Limit)
                             .DetachDelete("(n)");
-
-            ExecuteWithoutResults(cypher);
-        }
-
-
-        /// <summary>
-        /// Deletes all nodes independent of the Node type
-        /// </summary>
-        public void Delete()
-        {
-            var cypher = Connection.Cypher
-                          .Match("(n)")
-                          .With("n")
-                          .Limit(Limit)
-                          .Delete("(n)");
-
+            }
             ExecuteWithoutResults(cypher);
 
         }
@@ -52,7 +45,7 @@ namespace GraphMed_Beta.CypherHandling
         /// Deletes all specified Nodes. 
         /// </summary>
         /// <typeparam name="Node"></typeparam>
-        public void Delete<Node>()
+        public void Node<Node>(bool detach)
         {
             var node = typeof(Node);
             var cypher = Connection.Cypher
@@ -60,41 +53,36 @@ namespace GraphMed_Beta.CypherHandling
                            .With("n")
                            .Limit(Limit)
                            .Delete("(n)");
+            if (detach)
+            {
+                cypher = Connection.Cypher
+                            .Match("(n: " + node.Name + ")")
+                            .With("n")
+                            .Limit(Limit)
+                            .DetachDelete("n");
+            }
 
             ExecuteWithoutResults(cypher);
         }
 
         /// <summary>
-        /// Detaches and deletes all specified Nodes. 
+        /// Deletes everything in the database
         /// </summary>
-        /// <typeparam name="Node"></typeparam>
-        public void DetachDelete<Node>()
-        {
-            var node = typeof(Node);
-            var cypher = Connection.Cypher
-                            .Match("(n: " + node.Name + ")")
-                            .With("n")
-                            .Limit(Limit)
-                            .DetachDelete("n");
-
-            ExecuteWithoutResults(cypher);
-        }
-
-        public void Alles()
+        public void Everything()
         {
             var count = Cypher.Get().CountNodes();
-            var orig = count; 
+            var orig = count;
             Console.WriteLine("There are " + count + " nodes in the database. The deleting process may take several minutes. Please hold...");
-            /*
+
             Cypher.Drop().Constraint<Concept>();
             Cypher.Drop().Constraint<Description>();
             Cypher.Drop().Index<Concept>();
             Cypher.Drop().Index<Description>();
             Cypher.Drop().Index<TermNode>();
-            */
+
             while (count > 0)
             {
-                Cypher.Delete(100000).DetachDelete();
+                Cypher.Delete(100000).All(true);
                 Console.WriteLine(count + " nodes left");
             }
             Console.WriteLine("All " + orig + " nodes deleted");

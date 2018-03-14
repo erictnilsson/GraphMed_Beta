@@ -169,7 +169,7 @@ namespace GraphMed_Beta
         }
         private static void DeleteAll()
         {
-            Cypher.Delete().Alles();
+            Cypher.Delete().Everything();
         }
 
         private static void Help()
