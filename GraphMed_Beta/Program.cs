@@ -90,9 +90,9 @@ namespace GraphMed_Beta
         {
             Console.WriteLine("Logged out \"" + CurrentConfig.Instance.GraphDBUser + "\" from \"" + CurrentConfig.Instance.GraphDBUri + "\".");
 
-            CurrentConfig.Instance.GraphDBUser = "";
-            CurrentConfig.Instance.GraphDBPassword = "";
-            CurrentConfig.Instance.GraphDBUri = "";
+            CurrentConfig.Instance.GraphDBUser = null;
+            CurrentConfig.Instance.GraphDBPassword = null;
+            CurrentConfig.Instance.GraphDBUri = null;
         }
 
         private static bool IsConnected()
@@ -176,6 +176,7 @@ namespace GraphMed_Beta
         {
             Console.WriteLine("Please take a few minutes to read the README file.");
             Console.WriteLine("-Login [Username]-[Password]-[Database Uri]");
+            Console.WriteLine("-Logout 'logs out the current user'");
             Console.WriteLine("-Install [Snomed folder]-[Your database folder]-[Snomed version]");
             Console.WriteLine("-Search [Term]-[Relatives]-[Limit]-[Acceptability]-[Language]: \n" +
                 "\t" + "The only supported relatives are \"p\", \"c\", \"f\" \n" +
