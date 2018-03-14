@@ -20,10 +20,18 @@ Our intention with this application is to support an easy way of importing the S
 
 ### Installation
 Step 1
- * Setup and start a connection to a Neo4j Database. For information how to do it, please visit [the official Neo4j documentation] (https://neo4j.com/docs/operations-manual/current/installation/). 
- * Start the GraphMed application. You can choose to enter the neo4j credentials as arguments on startup as [username] [password] [No4j URI] or leave it blank. You will then be redirected to the Command Prompt.
+ * Setup and start a connection to a Neo4j Database. For information how to do it, please visit [the official Neo4j documentation](https://neo4j.com/docs/operations-manual/current/installation/). 
+ * Start the GraphMed application. You can choose to enter the neo4j credentials as arguments on startup as below, or you can leave it blank and login in the next step after startup.
+ ```
+ [username] [password] [Neo4j URI] 
+ ```
+ Example: 
+  ```
+ MyUser MyPassword http://localhost:7474/db/data
+ ```
+ * You will then be redirected to the Command Prompt.
 Step 2
- * If not logged in directly, type 
+ * If not logged in directly, type: 
  ```
  -Login [username]-[password]-[Neo4j URI]
  ```
@@ -33,11 +41,17 @@ Step 2
  ```
  * You have now initialized a connection to the neo4j database.
  Step 3
- * Locate your path to Snomed CT folder and your Neo4j database folder.
- * Example: Snomed CT folder:D:\SnomedCT_InternationalRF2_PRODUCTION_20170731T150000Z
-			Neo4j database folder: C:\Users\Jakob\Documents\Neo4j\default.graphdb
- * Identify what version your want to import, Example: 20170731
- * NOTE: If you dont want to load the enitire dataset at once, skip step 4 and go to ARGUMENTS.
+ * Locate your paths to the Snomed CT folder and your Neo4j database folder.
+ * Identify what version your want to import, e.g. "20170731".
  Step 4
- * In Command Prompt type:-I:[Snomed CT folder path] [Neo4j database folder path] [Snomed CT version]
- * Your are now loading the entire dataset into Neo4j, including index and constraints. This may take several minutes.
+ * In the Command Prompt type:
+ ```
+ -Install [Snomed CT folder path]-[Neo4j database folder path]-[Snomed CT version]
+ ```
+ Example: 
+ ```
+ -Install "C:\Users\User\Documents\SnomedCT_InternationalRF2_PRODUCTION"-"C:\Users\User\Documents\Neo4j\default.graphdb"-20170731
+ ```
+ * Your are now loading the entire dataset into Neo4j, indexing and constraining key values at each node. This may take several minutes.
+ 
+ 
