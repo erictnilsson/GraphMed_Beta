@@ -86,6 +86,16 @@ Our intention with this application is to support an easy way of importing the S
  #### -Delete
  * The "-Delete" function deletes the entire database and all of its indexes and constraints. 
  
+ ## For Developers
  
+ ## Authors
+ * Jakob Lindblad- Project Leader
+ * Eric Nilsson- Lead Developer
+ * Haris Eminovic- Manager and developer of the theoretical- and conceptual framework
+ * Nikola Pavlovic- Manager and developer of the theoretical- and conceptual framework
  
+ ## Acknowledgments
+ * ServiceWell AB- for hosting us and letting us do our internship there. 
+ * Lunds University- 
+ * [Readify/Neo4jClient](https://github.com/Readify/Neo4jClient)- for building a A .NET client for neo4j which is the foundation of this project. 
  
