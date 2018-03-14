@@ -54,4 +54,43 @@ Our intention with this application is to support an easy way of importing the S
  ```
  * Your are now loading the entire dataset into Neo4j, indexing and constraining key values at each node. This may take several minutes.
  
+ ### Arguments
+ #### -Search
+The "-Search" function enables you to do simple queries to the database in a strict search pattern. 
+
+The function is built as follows: 
+ ```
+ -Search [search term]-[relatives]-[relationship steps]-[acceptability terms]-[language code]
+ ```
+The "search term" is the starting node that you want to search for. It must either be a numerical "ConceptId" or a "Term".
+ 
+The "relatives" is the relationship you want to search for. It can either be "p" (parents; all nodes pointing at the searched node), "c" (children; all nodes which the searched node points at), or "f" (family; both parents and children).
+ 
+The "relationship steps" dictates how many steps away from the searched term you want to retreive. 
+ 
+The "acceptability terms" states what acceptability you want for the result; if you only want the preferred terms or the acceptable ones. It must either be "pref" (preferred) or "acc" (acceptable). 
+
+The "language code" is a two letter acronym for the language you want to search for. As of version 1.0 the only languages that are supported are GB (brittish) and american (US). 
+
+Hence, a search can look something like: 
+ ```
+ -Search Duckbill flathead-f-2-pref-GB
+ ```
+ Which means that you want to look for all preferred brittish terms that relates to "Duckbill flathead" two steps away. 
+ 
+ Another example would be: 
+ ```
+ -Search 117003-c-3-acc-US
+ ```
+ Which means that you want to look for all acceptable american terms that relates to the concept "117003" three steps away. 
+ 
+ #### -Exit
+ The "-Exit" function exits the application.
+ #### -Help
+ The "-Help" function displays a list of functions you can do in the application and how they work. 
+ #### -Delete
+ The "-Delete" function deletes the entire database and all of its indexes and constraints. 
+ 
+ 
+ 
  
