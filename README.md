@@ -98,5 +98,5 @@ Our intention with this application is to support an easy way of importing the S
  ## Acknowledgments
  * **ServiceWell AB**- for hosting us and letting us do our internship there. 
  * **Lunds University**- 
- * **[Readify/Neo4jClient]**(https://github.com/Readify/Neo4jClient)- for building a A .NET client for neo4j which is the foundation of this project. 
+ * **[Readify/Neo4jClient](https://github.com/Readify/Neo4jClient)**- for building a A .NET client for neo4j which is the foundation of this project. 
  
