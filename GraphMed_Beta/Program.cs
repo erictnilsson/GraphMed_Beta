@@ -1,11 +1,7 @@
 ﻿using GraphMed_Beta.CypherHandling;
 using GraphMed_Beta.FileHandling;
-using GraphMed_Beta.Model.Nodes;
-using Neo4jClient;
 using System;
-using System.Diagnostics;
 using System.Threading;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GraphMed_Beta
 {
@@ -14,7 +10,7 @@ namespace GraphMed_Beta
         static void Main(string[] args)
         {
             bool running = true;
-            Console.WriteLine("GraphMed Beta version 1.0");
+            Console.WriteLine("GraphMed Client version 1.0");
             string cmd = "-login";
             while (running)
             {
@@ -115,14 +111,19 @@ namespace GraphMed_Beta
         private static void Search(string searchword, string relatives, string limit, string acceptability, string langCode)
         {
             var search = Cypher.Get().Nodes(searchTerm: searchword.Trim(), relatives: relatives.Trim(), limit: limit.Trim(), acceptability: acceptability.Trim(), langCode: langCode.Trim());
-            Console.WriteLine("\n----BASE----");
-            Console.WriteLine("ConceptId: " + search.Id);
-            Console.WriteLine("Term: " + search.Term);
-            Console.WriteLine("----------------------" + "\n");
-            foreach (var s in search.Results)
+
+            if (search.Id == null || search.Id == "" || search.Term == null || search.Term == "")
+                Console.WriteLine("\n" + "No search result.");
+            else
             {
-                Console.WriteLine("ConceptId: " + s.ConceptId);
-                Console.WriteLine("Term: " + s.Term);
+                Console.WriteLine("\nConceptId: " + search.Id);
+                Console.WriteLine("Term: " + search.Term + "\n");
+
+                foreach (var s in search.Results)
+                {
+                    Console.WriteLine("ConceptId: " + s.ConceptId);
+                    Console.WriteLine("Term: " + s.Term);
+                }
             }
             Console.Write("\n");
         }
@@ -156,7 +157,13 @@ namespace GraphMed_Beta
                 if (Cypher.Get().Connection.IsConnected)
                     Console.WriteLine("Logged in as \"" + CurrentConfig.Instance.GraphDBUser + "\" on \"" + CurrentConfig.Instance.GraphDBUri + "\".");
                 else
+                {
                     Console.WriteLine("Failed to login as \"" + CurrentConfig.Instance.GraphDBUser + "\" on \"" + CurrentConfig.Instance.GraphDBUri + "\".");
+                    CurrentConfig.Instance.GraphDBUser = null;
+                    CurrentConfig.Instance.GraphDBPassword = null;
+                    CurrentConfig.Instance.GraphDBUri = null;
+                }
+
             }
 
         }
