@@ -41,6 +41,7 @@ Our intention with this application is to support an easy way of importing the S
  #### Step 3
  * Locate your paths to the Snomed CT folder and your Neo4j database folder.
  * Identify what version your want to import, e.g. "20170731".
+ 
  #### Step 4
  * In the Command Prompt type:
  ```
@@ -89,13 +90,13 @@ Our intention with this application is to support an easy way of importing the S
  ## For Developers
  
  ## Authors
- * Jakob Lindblad- Project Leader
- * Eric Nilsson- Lead Developer
- * Haris Eminovic- Manager and developer of the theoretical- and conceptual framework
- * Nikola Pavlovic- Manager and developer of the theoretical- and conceptual framework
+ * **Jakob Lindblad**- Project Leader
+ * **Eric Nilsson**- Lead Developer
+ * **Haris Eminovic**- Manager and developer of the theoretical- and conceptual framework
+ * **Nikola Pavlovic**- Manager and developer of the theoretical- and conceptual framework
  
  ## Acknowledgments
- * ServiceWell AB- for hosting us and letting us do our internship there. 
- * Lunds University- 
- * [Readify/Neo4jClient](https://github.com/Readify/Neo4jClient)- for building a A .NET client for neo4j which is the foundation of this project. 
+ * **ServiceWell AB**- for hosting us and letting us do our internship there. 
+ * **Lunds University**- 
+ * **[Readify/Neo4jClient]**(https://github.com/Readify/Neo4jClient)- for building a A .NET client for neo4j which is the foundation of this project. 
  
