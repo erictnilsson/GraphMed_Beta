@@ -29,7 +29,6 @@ Our intention with this application is to support an easy way of importing the S
   ```
  MyUser MyPassword http://localhost:7474/db/data
  ```
- * You will then be redirected to the Command Prompt.
 #### Step 2
  * If not logged in directly, type: 
  ```
@@ -39,7 +38,6 @@ Our intention with this application is to support an easy way of importing the S
  ```
  -Login MyUser-MyPassword-http://localhost:7474/db/data
  ```
- * You have now initialized a connection to the neo4j database.
  #### Step 3
  * Locate your paths to the Snomed CT folder and your Neo4j database folder.
  * Identify what version your want to import, e.g. "20170731".
@@ -52,9 +50,7 @@ Our intention with this application is to support an easy way of importing the S
  ```
  -Install "C:\Users\User\Documents\SnomedCT_InternationalRF2_PRODUCTION"-"C:\Users\User\Documents\Neo4j\default.graphdb"-20170731
  ```
- * Your are now loading the entire dataset into Neo4j, indexing and constraining key values at each node. This may take several minutes.
- 
- ### Arguments
+ ### Functions
  #### -Search
 * The "-Search" function enables you to do simple queries to the database in a strict search pattern. 
 * The function is built as follows: 
