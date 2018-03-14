@@ -82,7 +82,7 @@ Hence, a search can look something like:
  ```
  -Search 117003-c-3-acc-US
  ```
- Which means that you want to look for all acceptable american terms that relates to the concept "117003" three steps away. 
+ Which means that you want to look for all acceptable american terms that derives from the concept "117003" three steps away. 
  
  #### -Exit
  The "-Exit" function exits the application.
