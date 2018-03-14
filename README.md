@@ -88,9 +88,79 @@ Our intention with this application is to support an easy way of importing the S
  * The "-Delete" function deletes the entire database and all of its indexes and constraints. 
  
  ## For Developers
- 
+Writing Cyphers to the database is done by the static class Cypher.cs. The Cypher handler can call the following functions with a result limit as a parameter:
+```
+Cypher.Create(int? limit)
+```
+```
+Cypher.Load(int? limit, int? commit)
+```
+```
+Cypher.Delete(int? limit?)
+```
+```
+Cypher.Drop(int? limit?)
+```
+```
+Cypher.Get(int? limit?)
+```
+### Create
+```
+Cypher.Create().Index<Node>(string identifier);
+```
+Creates an index for the specified node-type on the specified identifier.  
+```
+Cypher.Create().Constraint<Node>(string identifer); 
+```
+Creates a constraint for the specified node-type on the specified identifier.  
+
+### Load
+The Load-function is based on Cyphers LOADCSV. Apart from the limit parameter, Load also contains the commit parameter. This means that when you call Load, you need to specify how many rows in the .CSV file you want to import and the size of the periodic commit. The parameters are nullable if you don't want to set a limit or use the default commit size. The function can in turn call on the different Nodes that you can build the graph database with:
+```
+Cypher.Load(limit: null, commit: 20_000).Concepts(constrain: true); 
+```
+When loading the Concepts, you have the choice of constraining the Concepts by it's Id; speeding up the search function of the database. 
+```
+Cypher.Load(limit: null, commit: 20_000).Descriptions(forceRelationship: true, index: true, constrain: true); 
+```
+When loading the Descriptions, you have the choice of forcing a relationship on the anchoring Concept. If you do, the relationship will be made between the Description and Concept "on create". You can also choose to index and uniquely constrain the Descriptions on it's Id and ConceptId; speeding up the search function of the database. 
+```
+Cypher.Load(limit: null, commit: 20_000).Relationships(); 
+```
+```
+Cypher.Load(limit: null, commit: 20_000).Refset(index: true); 
+```
+When loading the Refset, you have the choice of indexing the Terms by it's Term; speeding up the search function of the database. 
+
+### Delete
+```
+Cypher.Delete(limit: null).All(detach: true); 
+```
+When deleting "all", the nodes are deleted independent on the node-type. You have the choice of detaching the delete aswell, meaning that you can detach the relationships connected to the deleted node. 
+```
+Cypher.Delete(limit: null).Node<Node>(detach: true);
+```
+When deleting "node", the nodes are deleted dependent on the specified node-type. ou have the choice of detaching the delete aswell, meaning that you can detach the relationships connected to the deleted node. 
+```
+Cypher.Delete(limit: null).Everything(); 
+```
+When deleting "everything", you detach-delete everything in the database in batches, also dropping all indexes and constraints present in the database. 
+### Drop
+```
+Cypher.Drop().Index<Node>(); 
+```
+Drops the indexes on the specified node-type. 
+```
+Cypher.Drop().Constraint<Node>(); 
+```
+Drops the constraints on the specified node-type. 
+### Get
+```
+Cypher.Get().Nodes(string searchTerm, string relatives, string limit, string acceptability, string langCode); 
+```
+Gets a Result-object with the specified search-pattern. 
  ## Authors
- * **Jakob Lindblad**- Project Leader
+ * **Jakob Lindblad**- Project Manager
  * **Eric Nilsson**- Lead Developer
  * **Haris Eminovic**- Manager and developer of the theoretical- and conceptual framework
  * **Nikola Pavlovic**- Manager and developer of the theoretical- and conceptual framework
