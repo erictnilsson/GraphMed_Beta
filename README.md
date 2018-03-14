@@ -19,7 +19,7 @@ Neo4j graph database enables moore simple querying of complex patterns.
 Our intention with this application is to support an easy way of importing the Snomed CT termonology into a Neo4j database as well as querying simple queries to show the powerful effect of using a graph database.
 
 ### Installation
-Step 1
+####Step 1
  * Setup and start a connection to a Neo4j Database. For information how to do it, please visit [the official Neo4j documentation](https://neo4j.com/docs/operations-manual/current/installation/). 
  * Start the GraphMed application. You can choose to enter the neo4j credentials as arguments on startup as below, or you can leave it blank and login in the next step after startup.
  ```
@@ -30,7 +30,7 @@ Step 1
  MyUser MyPassword http://localhost:7474/db/data
  ```
  * You will then be redirected to the Command Prompt.
-Step 2
+####Step 2
  * If not logged in directly, type: 
  ```
  -Login [username]-[password]-[Neo4j URI]
@@ -40,10 +40,10 @@ Step 2
  -Login MyUser-MyPassword-http://localhost:7474/db/data
  ```
  * You have now initialized a connection to the neo4j database.
- Step 3
+ ####Step 3
  * Locate your paths to the Snomed CT folder and your Neo4j database folder.
  * Identify what version your want to import, e.g. "20170731".
- Step 4
+ ####Step 4
  * In the Command Prompt type:
  ```
  -Install [Snomed CT folder path]-[Neo4j database folder path]-[Snomed CT version]
